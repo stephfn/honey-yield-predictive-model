@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# VS Code settings
+.vscode/
+*.code-workspace
+
+# Harnesses
+.claude/
+.codex/
+
+# Data folder (locally download instead of storing in git)
+data/
