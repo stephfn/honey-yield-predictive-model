@@ -227,3 +227,9 @@ __marimo__/
 
 # Data folder (locally download instead of storing in git)
 data/
+
+# DuckDB database
+*.duckdb
+
+# Secrets file
+.env
