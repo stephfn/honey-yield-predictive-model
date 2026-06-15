@@ -11,7 +11,7 @@ To connect to our DuckDB server, you must install and configure Tailscale (VPN) 
 4. Visit the URL provided by @CmdrJorgs to add your device to the team's DuckDB network.
 
 **To install DuckDB (Python):**
-1. In your python environment, run `pip install duckdb` (Default Anaconda installs already have DuckDB, in which case you may need to update it.)
+1. In your python environment, run `pip install duckdb` (Default Anaconda installs already have DuckDB, in which case you may need to update it using `pip install duckdb -U`.)
 2. Copy the `.env` file provided by @CmdrJorgs into your repo root directory.
 
 The DuckDB scripts in the Jupyter notebook should work now.
