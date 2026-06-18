@@ -78,16 +78,14 @@ Question:
 Can hive history predict future weight changes?
 
 ### Model 2: Hive + Internal Sensors
-Features:
-- Model 1
+- All Model 1 Features
 - Internal Temperature
 
 Question:
 Does colony health improve prediction?
 
 ### Model 3: Hive + Environment
-Features:
-- Model 2
+- All Model 2 Features
 - External Temperature
 - Humidity
 - Pressure
@@ -96,8 +94,7 @@ Question:
 Do environmental conditions improve prediction?
 
 ### Model 4: Full Model
-Features:
-- Model 3
+- All Model 3 Features
 - Beekeeper Observations
 
 Question:
