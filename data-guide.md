@@ -10,3 +10,5 @@ USDA NASS | State-level (annual) | Annual Yield | Confirmed | Regional Yield Cov
 | Table Name | Database Name | Columns | Notes |
 | --- | --- | --- | --- |
 | HOBOS_flow_2017 | HOBOS | timestamp, flow | |
+
+Querying NOAA GHCN-Daily
