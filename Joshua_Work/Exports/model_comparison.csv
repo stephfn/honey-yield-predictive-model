@@ -1,0 +1,4 @@
+Model,MAE,RMSE,R²
+Linear Regression Baseline,8.33,9.969,-0.173
+AdaBoost Regressor,7.718,9.215,-0.002
+LightGBM Regressor,8.319,9.697,-0.11
