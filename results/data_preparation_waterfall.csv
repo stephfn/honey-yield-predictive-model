@@ -1,0 +1,6 @@
+gate,rows_remaining,rows_dropped
+"daily rows ingested (years, interval=d)",29172,0
+has a previous consecutive day,28078,1094
+has a next consecutive day,27110,968
+all three weights present,27092,18
+all three weights > 0 (Milestone 3 guard),26215,877
