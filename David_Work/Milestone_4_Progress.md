@@ -195,10 +195,10 @@ MAE **0.5128**.
    `Stephanie_Work/Project_Log_Stephanie/Project_Log_Steph.ipynb`. The **token is not**
    in any tracked file (verified). Scrubbing the working files does not remove it from
    git history, so a rewrite is a team decision. None of the Milestone 4 files contain it.
-3. **Joshua:** Part F weather join (lat/lon and 34 site coordinates are in the table;
+3. **Part F weather join** (lat/lon and 34 site coordinates are in the table;
    `WEATHER_FEATURES` is already defined so the ablation ladder picks it up automatically),
    LightGBM rung, PR curve with a chosen operating point.
-4. **Stephanie:** review notebook §2 against the pipeline notebook; `Modeling_schema.md`
+4. **Review notebook §2 against the pipeline notebook**; `Modeling_schema.md`
    needs the new flag columns and the `end_of_day_weight_kg` naming correction.
-5. Consider modelling the minute/hourly grain in Milestone 5 — daily averaging is the most
+5. **Consider modelling the minute/hourly grain** — daily averaging is the most
    likely reason the target looks noise-dominated.
