@@ -7517,90 +7517,18 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Milestone-4-(alternate)-%E2%80%94-Weekly-and-Monthly-Forecast-Horizons">Milestone 4 (alternate) — Weekly and Monthly Forecast Horizons<a class="anchor-link" href="#Milestone-4-(alternate)-%E2%80%94-Weekly-and-Monthly-Forecast-Horizons">¶</a></h1><p><strong>Team:</strong> Stephanie Nord, David Jorgensen, Joshua Amaya
+<h1 id="Milestone-4:-Weekly-and-Monthly-Forecast-Horizons">Milestone 4: Weekly and Monthly Forecast Horizons<a class="anchor-link" href="#Milestone-4:-Weekly-and-Monthly-Forecast-Horizons">¶</a></h1><p><strong>Team:</strong> Stephanie Nord, David Jorgensen, Joshua Amaya
 <strong>Course project:</strong> predicting hive weight change from colony sensor history</p>
 <hr/>
-<h2 id="What-this-notebook-is">What this notebook is<a class="anchor-link" href="#What-this-notebook-is">¶</a></h2><p><code>Milestone_4.ipynb</code> predicts <strong>tomorrow's</strong> change in daily-mean hive weight, and its
+<p>Previous milestone models predicted <strong>tomorrow's</strong> change in daily-mean hive weight, and its
 central result is negative: no single-stage model beats predicting zero, and only a
 two-stage classifier→regressor pipeline clears the naive bar, at <strong>+5.9% skill</strong>.</p>
 <p>The follow-up: <strong>if we forecast week-to-week or month-to-month instead, what has to change,
-and is the answer any better?</strong> A companion, not a replacement — source data, provenance,
-publishers' preprocessing and the extreme-event investigation carry over from
-<code>Milestone_4.ipynb</code> §§2–3 and are not repeated. What <em>is</em> repeated is every part of the
-protocol the grain change touches, which turns out to be most of it.</p>
+and is the answer any better?</strong></p>
 <p><strong>Headline:</strong> at week grain with the target anchored on period mean weight, a
 <em>single-stage</em> model beats its naive baseline for the first time in this project, and a
 two-stage pipeline at the re-derived threshold more than doubles the daily skill score
 (+15.2% against +5.9%). §6.2 puts the two side by side.</p>
-<h2 id="How-to-run">How to run<a class="anchor-link" href="#How-to-run">¶</a></h2><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
-jupyter<span class="w"> </span>nbconvert<span class="w"> </span>--to<span class="w"> </span>html<span class="w"> </span>--execute<span class="w"> </span>Milestone_4_alt.ipynb
-</pre></div>
-<p>No network, no credentials. Every number and figure is computed at run time from
-<code>data/honey_model.parquet</code> and <code>data/honey_weather.parquet</code>, both committed. Re-grain
-logic is in <code>src/honeymodel/periods.py</code>, the weather layer in <code>src/honeymodel/weather.py</code>.</p>
-<h2 id="The-eight-things-that-had-to-change">The eight things that had to change<a class="anchor-link" href="#The-eight-things-that-had-to-change">¶</a></h2><table>
-<thead>
-<tr>
-<th>#</th>
-<th>What changes</th>
-<th>Section</th>
-<th>Consequence if skipped</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td><strong>The target's anchor</strong> — mean-of-period vs last-day-of-period</td>
-<td>2.3</td>
-<td>Decides whether the model beats its baseline at all</td>
-</tr>
-<tr>
-<td>2</td>
-<td><strong>A coverage gate</strong> — a week from 2 readings is not a week</td>
-<td>2.2</td>
-<td>Target noise scales with how many days happened to report</td>
-</tr>
-<tr>
-<td>3</td>
-<td><strong>Every feature rebuilt</strong> — daily lags are daily constructs</td>
-<td>2.4</td>
-<td><code>previous_day_weight_kg</code> has no meaning at week grain</td>
-</tr>
-<tr>
-<td>4</td>
-<td><strong>An embargo at the split boundary</strong></td>
-<td>4.1</td>
-<td>Training labels measured inside the test window</td>
-</tr>
-<tr>
-<td>5</td>
-<td><strong>New baselines</strong> — calendar climatology becomes a real competitor</td>
-<td>4.3</td>
-<td>Skill score credits the model for knowing July gains</td>
-</tr>
-<tr>
-<td>6</td>
-<td><strong>A re-derived extreme threshold</strong> — ±5 kg stops meaning extreme</td>
-<td>3.2</td>
-<td>The two-stage pipeline silently models a different thing</td>
-</tr>
-<tr>
-<td>7</td>
-<td><strong>Sample size falls 9× (week) / 42× (month)</strong></td>
-<td>2.2</td>
-<td>Model capacity and fold count no longer fit the data</td>
-</tr>
-<tr>
-<td>8</td>
-<td><strong>Comparability</strong> — MAE across grains measures different things</td>
-<td>6.2</td>
-<td>Only the skill score can be read across the three horizons</td>
-</tr>
-</tbody>
-</table>
-<h2 id="Two-revisions-since-first-writing">Two revisions since first writing<a class="anchor-link" href="#Two-revisions-since-first-writing">¶</a></h2><p>Both come out of <code>Milestone_5.ipynb</code>, which carried out §7.3's recommendations: <strong>§5.6 is
-new</strong> (the ERA5 weather layer and its ablation ladder), and <strong>§6.1's seasonal table is
-corrected</strong>, reversing both of its headline claims.</p>
 </div>
 </div>
 </div>
@@ -7620,7 +7548,7 @@ corrected</strong>, reversing both of its headline claims.</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -7631,24 +7559,30 @@ corrected</strong>, reversing both of its headline claims.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
+<span class="c1"># Make the project's `src/` package importable without installing it, so the</span>
+<span class="c1"># notebook runs straight from a clean checkout.</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"src"</span><span class="p">))</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">honeymodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span><span class="p">,</span> <span class="n">evaluation</span> <span class="k">as</span> <span class="n">ev</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">periods</span> <span class="k">as</span> <span class="n">pr</span><span class="p">,</span> <span class="n">weather</span> <span class="k">as</span> <span class="n">wx</span>
 
+<span class="c1"># Silence noisy, expected library warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">"display.width"</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">"display.max_columns"</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">"display.width"</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>        <span class="c1"># let wide tables print on one line</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">"display.max_columns"</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>   <span class="c1"># show every feature column, not "..."</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"figure.dpi"</span><span class="p">:</span> <span class="mi">110</span><span class="p">,</span> <span class="s2">"axes.grid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"grid.alpha"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">})</span>
 
-<span class="n">SEED</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">SEED</span> <span class="o">=</span> <span class="mi">42</span>  <span class="c1"># fixed seed so every model fit in this notebook is reproducible</span>
+<span class="c1"># Rolling-origin CV settings shared by every `protocol()` call below: 4</span>
+<span class="c1"># expanding folds, each testing a 6-month window, with at least 12 months of</span>
+<span class="c1"># training history before the first fold opens.</span>
 <span class="n">N_SPLITS</span><span class="p">,</span> <span class="n">HORIZON_MONTHS</span><span class="p">,</span> <span class="n">MIN_TRAIN_MONTHS</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">12</span>
 
 <span class="c1"># The event-distance columns are normalised on load: the published *_last_dif values are</span>
 <span class="c1"># in days for 33 hives and seconds for 24, and the period aggregate takes the last value</span>
 <span class="c1"># in each period, so an un-normalised column would mix units inside one feature.</span>
 <span class="c1">#</span>
-<span class="c1"># CORRECTION (Milestone 5): per-hive normalisation is not sufficient. The unit switches</span>
+<span class="c1"># CORRECTION: per-hive normalisation is not sufficient. The unit switches</span>
 <span class="c1"># *within* a hive's record too -- hive 21 advances by 1.0 per day through 2019 and by</span>
 <span class="c1"># 86,400 per day through mid-2020 -- so these columns remain partly mis-converted. The</span>
 <span class="c1"># event rungs below are therefore weaker than they look, which reinforces rather than</span>
@@ -7657,6 +7591,7 @@ corrected</strong>, reversing both of its headline claims.</p>
 <span class="c1"># and needs no unit at all.</span>
 <span class="n">daily_df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">add_season</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">normalise_event_distance_units</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">load_model_table</span><span class="p">()))</span>
 
+<span class="c1"># Sanity-check the loaded data before doing anything else with it.</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"daily rows : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">daily_df</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"hives      : </span><span class="si">{</span><span class="n">daily_df</span><span class="o">.</span><span class="n">hive_id</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"date range : </span><span class="si">{</span><span class="n">daily_df</span><span class="o">.</span><span class="n">measurement_date</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">daily_df</span><span class="o">.</span><span class="n">measurement_date</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -7691,13 +7626,13 @@ weather    : 45,594 site-days across 34 sites
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="2.-Re-graining-the-Data">2. Re-graining the Data<a class="anchor-link" href="#2.-Re-graining-the-Data">¶</a></h2><h3 id="2.1-Why-the-grain-is-the-question,-not-a-parameter">2.1 Why the grain is the question, not a parameter<a class="anchor-link" href="#2.1-Why-the-grain-is-the-question,-not-a-parameter">¶</a></h3><p>The daily target has a standard deviation of 1.84 kg against a colony mean weight of
-34.3 kg, and <code>Milestone_4.ipynb</code> §4.3 shows that repeating yesterday's change is the
+34.3 kg, and Milestone 3 shows that repeating yesterday's change is the
 <em>worst</em> of five naive rules (R² −0.58). A series anti-persistent at lag 1 is one where
 most of what moves day to day is not colony behaviour.</p>
 <p>Three mechanisms make a longer period plausibly easier:</p>
 <ul>
 <li><strong>Independent day-level noise cancels.</strong> Scale noise, a re-tare, a rain-soaked roof
-drying out — these average toward zero over five to seven days.</li>
+drying out: these average toward zero over five to seven days.</li>
 <li><strong>Beekeeper handling artifacts damp.</strong> The daily milestone §3.5 finds 94% of its
 "extreme events" are the &gt;0.3 kg/min jumps the publishers attribute to handling. A jump
 reversed within the week largely cancels in a period <em>mean</em>; one that is not reversed is
@@ -7730,7 +7665,9 @@ benefit.</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">waterfalls</span> <span class="o">=</span> <span class="p">{</span><span class="n">grain</span><span class="p">:</span> <span class="n">pr</span><span class="o">.</span><span class="n">coverage_waterfall</span><span class="p">(</span><span class="n">daily_df</span><span class="p">,</span> <span class="n">grain</span><span class="p">)</span> <span class="k">for</span> <span class="n">grain</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"week"</span><span class="p">,</span> <span class="s2">"month"</span><span class="p">)}</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Row-count waterfall showing how many hive-days survive each aggregation gate</span>
+<span class="c1"># (coverage, then contiguity), for both target grains.</span>
+<span class="n">waterfalls</span> <span class="o">=</span> <span class="p">{</span><span class="n">grain</span><span class="p">:</span> <span class="n">pr</span><span class="o">.</span><span class="n">coverage_waterfall</span><span class="p">(</span><span class="n">daily_df</span><span class="p">,</span> <span class="n">grain</span><span class="p">)</span> <span class="k">for</span> <span class="n">grain</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"week"</span><span class="p">,</span> <span class="s2">"month"</span><span class="p">)}</span>
 <span class="k">for</span> <span class="n">grain</span><span class="p">,</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">waterfalls</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"--- </span><span class="si">{</span><span class="n">grain</span><span class="si">}</span><span class="s2"> "</span> <span class="o">+</span> <span class="s2">"-"</span> <span class="o">*</span> <span class="mi">52</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
@@ -7780,13 +7717,8 @@ target. With 23–35% sensor missingness upstream, thin weeks are common. The ga
 observed days for a week, ≥20 for a month.</p>
 <p><strong>Contiguity, in both directions.</strong> The target is the change over the <em>next</em> period, so a
 row needs its successor present and adjacent in <code>period_index</code>; the lag features need the
-predecessor. Contiguity is checked on the period index, not on dates — a hive dark for
-three weeks has no valid change across the gap, and interpolating one would fabricate the
-most important feature in the model.</p>
-<p>The result: <strong>26,215 hive-days become 3,012 usable hive-weeks or 622 hive-months</strong> — a 9×
-and 42× reduction, a median of 42 weeks or 10 months per hive. Those counts govern
-everything in Section 5, and are why the monthly result carries a caveat the weekly one
-does not.</p>
+predecessor. Contiguity is checked on the period index rather than dates: for example, a hive dark for three weeks has no valid change across the gap, and interpolating one would fabricate the most important feature in the model.</p>
+<p>The result: <strong>26,215 hive-days become 3,012 usable hive-weeks or 622 hive-months</strong>. This is a 9× and 42× reduction, a median of 42 weeks or 10 months per hive.</p>
 </div>
 </div>
 </div>
@@ -7798,18 +7730,22 @@ does not.</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">week_raw</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">aggregate_to_period</span><span class="p">(</span><span class="n">daily_df</span><span class="p">,</span> <span class="s2">"week"</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Aggregate the daily table to week- and month-level rows (raw aggregation</span>
+<span class="c1"># only -- no target or feature engineering yet) to see how many periods per</span>
+<span class="c1"># hive actually come out the other side of the coverage gate.</span>
+<span class="n">week_raw</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">aggregate_to_period</span><span class="p">(</span><span class="n">daily_df</span><span class="p">,</span> <span class="s2">"week"</span><span class="p">)</span>
 <span class="n">month_raw</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">aggregate_to_period</span><span class="p">(</span><span class="n">daily_df</span><span class="p">,</span> <span class="s2">"month"</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="p">(</span><span class="n">grain</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"week"</span><span class="p">,</span> <span class="n">week_raw</span><span class="p">),</span> <span class="p">(</span><span class="s2">"month"</span><span class="p">,</span> <span class="n">month_raw</span><span class="p">)]):</span>
-    <span class="n">counts</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"hive_id"</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"hive_id"</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>  <span class="c1"># observed periods per hive</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#4c72b0"</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"none"</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">median</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s2">"crimson"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span>
                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"median </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">median</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Observed </span><span class="si">{</span><span class="n">grain</span><span class="si">}</span><span class="s2">s per hive"</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">grain</span><span class="si">}</span><span class="s2">s"</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">"hives"</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"week : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">week_raw</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> hive-weeks, median </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">week_raw</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'hive_id'</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">median</span><span class="p">())</span><span class="si">}</span><span class="s2"> per hive"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"month: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">month_raw</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> hive-months, median </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">month_raw</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'hive_id'</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">median</span><span class="p">())</span><span class="si">}</span><span class="s2"> per hive"</span><span class="p">)</span>
@@ -7868,10 +7804,8 @@ most consequential choice in the notebook.</p>
 </tr>
 </tbody>
 </table>
-<p>A tiebreaker from the level below: <code>end_of_day_weight_kg</code> is itself a <em>misnomer</em> — the
-publishers compute it as the mean of the day's minute readings, not the last one
-(<code>Milestone_4.ipynb</code> §2.2), so a period mean keeps the grain change consistent with what
-the daily grain already does.</p>
+<p>A tiebreaker from the level below: <code>end_of_day_weight_kg</code> is itself a <em>misnomer</em>. The
+publishers compute it as the mean of the day's minute readings, so a period mean keeps the grain change consistent with what the daily grain already does.</p>
 <p>The head-to-head decides it, not the argument:</p>
 </div>
 </div>
@@ -7885,20 +7819,30 @@ the daily grain already does.</p>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">prepare</span><span class="p">(</span><span class="n">grain</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">"mean"</span><span class="p">,</span> <span class="n">min_days</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_weather</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="c1"># Aggregate -&gt; chain features and target -&gt; attach weather -&gt; drop rows with no</span>
-    <span class="c1"># successor period. The weather join is an equality join on rounded coordinates and</span>
-    <span class="c1"># date, so it cannot drop or duplicate a row; `lookahead=True` additionally attaches</span>
-    <span class="c1"># the *forecast* period's weather under next_wx_* names, which §5.6 uses as a</span>
-    <span class="c1"># labelled upper bound and which the leakage guard blocks by default.</span>
+<span class="w">    </span><span class="sd">"""Build a modelling-ready period frame for one grain and target anchor.</span>
+
+<span class="sd">    Aggregate -&gt; chain features and target -&gt; attach weather -&gt; drop rows with</span>
+<span class="sd">    no successor period. The weather join is an equality join on rounded</span>
+<span class="sd">    coordinates and date, so it cannot drop or duplicate a row; `lookahead=True`</span>
+<span class="sd">    additionally attaches the *forecast* period's weather under next_wx_*</span>
+<span class="sd">    names, which §5.6 uses as a labelled upper bound and which the leakage</span>
+<span class="sd">    guard blocks by default.</span>
+<span class="sd">    """</span>
     <span class="n">aggregated</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">aggregate_to_period</span><span class="p">(</span><span class="n">daily_df</span><span class="p">,</span> <span class="n">grain</span><span class="p">,</span> <span class="n">min_days</span><span class="o">=</span><span class="n">min_days</span><span class="p">)</span>
     <span class="n">framed</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">add_period_features</span><span class="p">(</span><span class="n">aggregated</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="n">anchor</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">with_weather</span><span class="p">:</span>
         <span class="n">framed</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">add_period_weather</span><span class="p">(</span><span class="n">framed</span><span class="p">,</span> <span class="n">daily_df</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="n">grain</span><span class="p">,</span> <span class="n">lookahead</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Rows with no valid target (e.g. a hive's last period, which has no</span>
+    <span class="c1"># successor to measure a change against) cannot be scored or trained on.</span>
     <span class="k">return</span> <span class="n">framed</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">pr</span><span class="o">.</span><span class="n">PERIOD_TARGET</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">protocol</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">feature_set</span><span class="o">=</span><span class="s2">"history"</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="s2">"rf"</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">SEED</span><span class="p">):</span>
-    <span class="c1"># One place for the whole protocol: folds -&gt; baselines -&gt; matrix -&gt; per-fold results.</span>
+<span class="w">    </span><span class="sd">"""Run the full evaluation protocol on a prepared period frame.</span>
+
+<span class="sd">    One place for the whole protocol: folds -&gt; baselines -&gt; matrix -&gt; per-fold</span>
+<span class="sd">    results, so every experiment in this notebook is scored the same way.</span>
+<span class="sd">    """</span>
     <span class="n">folds</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">rolling_origin_period_cv</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">N_SPLITS</span><span class="p">,</span> <span class="n">HORIZON_MONTHS</span><span class="p">,</span> <span class="n">MIN_TRAIN_MONTHS</span><span class="p">)</span>
     <span class="n">baselines</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">period_baseline_board</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">folds</span><span class="p">)</span>
     <span class="n">matrix</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">build_period_matrix</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">feature_set</span><span class="p">)</span>
@@ -7911,6 +7855,8 @@ the daily grain already does.</p>
     <span class="k">return</span> <span class="n">folds</span><span class="p">,</span> <span class="n">baselines</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="n">results</span>
 
 
+<span class="c1"># Head-to-head: same grain, same features, same folds, same model -- only the</span>
+<span class="c1"># target's anchor (last observed day vs. period mean) differs between rows.</span>
 <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">grain</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"week"</span><span class="p">,</span> <span class="s2">"month"</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">anchor</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"last"</span><span class="p">,</span> <span class="s2">"mean"</span><span class="p">):</span>
@@ -8026,10 +7972,8 @@ the daily grain already does.</p>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p><strong>The anchor decides the result.</strong> On the last-day anchor a Random Forest <em>loses</em> to the
-naive bar at both grains. On the period-mean anchor it wins at both. Same rows, same
-features, same folds, same model — the difference is entirely in what "this week's weight"
-was taken to mean.</p>
-<p>The mean anchor also shrinks the target's sd from 4.96 to 4.10 kg at week grain — not
+naive bar at both grains. On the period-mean anchor it wins at both. The difference is entirely in how "this week's weight" was interpreted.</p>
+<p>The mean anchor also shrinks the target's sd from 4.96 to 4.10 kg at week grain. This is not
 merely a smoother target, but one with visibly less of the handling-artifact variance.</p>
 <p>The rest of this notebook uses <code>anchor="mean"</code>.</p>
 </div>
@@ -8043,12 +7987,12 @@ merely a smoother target, but one with visibly less of the handling-artifact var
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="2.4-Features-and-leakage-controls-at-the-new-grain">2.4 Features and leakage controls at the new grain<a class="anchor-link" href="#2.4-Features-and-leakage-controls-at-the-new-grain">¶</a></h3><p>Every daily feature is a daily construct. <code>previous_day_weight_kg</code>,
-<code>rolling_3_day_weight_kg</code>, <code>weight_slope_2_day_kg</code> — none mean anything at week grain, and
+<code>rolling_3_day_weight_kg</code>, and <code>weight_slope_2_day_kg</code> do mean anything at week grain, and
 none survive the re-grain. <code>periods.py</code> rebuilds the ladder:</p>
 <ul>
 <li><strong>Weight chain</strong>: period weight, previous period weight, this and previous period's
 change, 4-period rolling mean and sd of change, deviations from those rollings.</li>
-<li><strong>Within-period shape</strong> — new, no daily analogue: OLS slope of daily weight across the
+<li><strong>Within-period shape</strong>: new, no daily analogue. OLS slope of daily weight across the
 period, sd of daily weight inside it, largest single-day change. A week that gained 2 kg
 steadily and one that gained 2 kg in a jump are different weeks; only these tell them
 apart.</li>
@@ -8072,7 +8016,8 @@ names exist here.</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">PERIOD_FORBIDDEN</span><span class="p">)</span><span class="si">}</span><span class="s2"> forbidden period columns:"</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># List every column the leakage guard refuses to admit as a feature.</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">PERIOD_FORBIDDEN</span><span class="p">)</span><span class="si">}</span><span class="s2"> forbidden period columns:"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">PERIOD_FORBIDDEN</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
@@ -8144,6 +8089,8 @@ history rung: 19 features
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">month_df</span> <span class="o">=</span> <span class="n">prepare</span><span class="p">(</span><span class="s2">"month"</span><span class="p">)</span>
+<span class="c1"># Pull all three grains' targets into one dict so their distributions can be</span>
+<span class="c1"># compared side by side below.</span>
 <span class="n">targets</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">"day"</span><span class="p">:</span> <span class="n">daily_df</span><span class="o">.</span><span class="n">target_next_day_weight_change_kg</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span>
     <span class="s2">"week"</span><span class="p">:</span> <span class="n">week_df</span><span class="p">[</span><span class="n">pr</span><span class="o">.</span><span class="n">PERIOD_TARGET</span><span class="p">],</span>
@@ -8161,13 +8108,14 @@ history rung: 19 features
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="p">(</span><span class="n">grain</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">targets</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-    <span class="n">limit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">abs</span><span class="p">(),</span> <span class="mi">99</span><span class="p">)</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">abs</span><span class="p">(),</span> <span class="mi">99</span><span class="p">)</span>  <span class="c1"># clip the top 1% tail so the histogram is readable</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="o">-</span><span class="n">limit</span><span class="p">,</span> <span class="n">limit</span><span class="p">),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#4c72b0"</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"none"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">sign</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">sign</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"crimson"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">sign</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"crimson"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>  <span class="c1"># mark the daily ±5 kg rule</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">grain</span><span class="si">}</span><span class="s2"> target (sd </span><span class="si">{</span><span class="n">values</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> kg)"</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">"kg"</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">"rows"</span><span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">"±5 kg"</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"upper right"</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -8258,8 +8206,7 @@ history rung: 19 features
 two-stage pipeline around that split. The threshold was inherited by convention; its §3.6
 sweeps it and finds the trade-off mild.</p>
 <p>Carrying it across the grain change is not mild. Five kilograms is 2.7 daily sd but only
-1.2 weekly ones, so the same number now selects <strong>10.4% of weeks</strong> — no longer a tail, and
-no longer the thing the two-stage architecture was designed around.</p>
+1.2 weekly ones, so the same number now selects <strong>10.4% of weeks</strong>.</p>
 </div>
 </div>
 </div>
@@ -8271,9 +8218,12 @@ no longer the thing the two-stage architecture was designed around.</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">sweep</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">period_threshold_sweep</span><span class="p">(</span><span class="n">week_df</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">11.1</span><span class="p">,</span> <span class="mf">13.5</span><span class="p">,</span> <span class="mi">20</span><span class="p">])</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Sweep candidate extreme-event thresholds (kg) to see what share of weeks each one selects.</span>
+<span class="n">sweep</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">period_threshold_sweep</span><span class="p">(</span><span class="n">week_df</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">11.1</span><span class="p">,</span> <span class="mf">13.5</span><span class="p">,</span> <span class="mi">20</span><span class="p">])</span>
 <span class="n">display</span><span class="p">(</span><span class="n">sweep</span><span class="p">)</span>
 
+<span class="c1"># Re-derive the threshold in standard-deviation units rather than carrying the</span>
+<span class="c1"># daily 5 kg rule over unchanged (see §3.2).</span>
 <span class="n">WEEK_THRESHOLD</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">relative_extreme_threshold</span><span class="p">(</span><span class="n">week_df</span><span class="p">[</span><span class="n">pr</span><span class="o">.</span><span class="n">PERIOD_TARGET</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">daily_rate</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">targets</span><span class="p">[</span><span class="s2">"day"</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"daily rule: 5.0 kg = 2.7 daily sd  -&gt; </span><span class="si">{</span><span class="n">daily_rate</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% of hive-days extreme"</span><span class="p">)</span>
@@ -8391,7 +8341,7 @@ re-derived at 2.7 weekly sd        -&gt; 11.1 kg
 <p><strong>The threshold is re-derived in standard-deviation units, not carried over in kilograms.</strong>
 At 2.7 weekly sd it lands at <strong>11.1 kg</strong>, selecting 3.0% of weeks. §5.3 uses this
 figure.</p>
-<p>Matching the sd multiple does <em>not</em> reproduce the daily 1.7% positive rate — it gives
+<p>Matching the sd multiple does <em>not</em> reproduce the daily 1.7% positive rate. Rather, it gives
 3.0%, and 1.7% would need 13.5 kg (3.3 sd). Only one can be held fixed, and the discrepancy
 is itself a measurement: the same sd multiple captures more of the weekly distribution, so
 the weekly target is <strong>less heavy-tailed relative to its own spread</strong>. That is what
@@ -8411,11 +8361,11 @@ A per-hive relative rule is the honest fix, left as future work as in the daily 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="4.-Validation-Framework">4. Validation Framework<a class="anchor-link" href="#4.-Validation-Framework">¶</a></h2><h3 id="4.1-The-embargo-%E2%80%94-the-one-genuinely-new-correctness-requirement">4.1 The embargo — the one genuinely new correctness requirement<a class="anchor-link" href="#4.1-The-embargo-%E2%80%94-the-one-genuinely-new-correctness-requirement">¶</a></h3><p>The daily splitter is safe for a reason that stops being true here. A daily row's label
+<h2 id="4.-Validation-Framework">4. Validation Framework<a class="anchor-link" href="#4.-Validation-Framework">¶</a></h2><h3 id="4.1-The-embargo">4.1 The embargo<a class="anchor-link" href="#4.1-The-embargo">¶</a></h3><p>The daily splitter is safe for a reason that stops being true here. A daily row's label
 lands one day later, so cutting training at the origin date leaves at most one day of
 overlap, and <code>assert_split_integrity</code> catches it.</p>
-<p>At week grain a row's label is measured over the <strong>following period</strong> — up to 7 days after
-its features — so a training row whose features predate the origin can carry a label
+<p>At week grain a row's label is measured over the <strong>following period</strong> (up to 7 days after
+its features) so a training row whose features predate the origin can carry a label
 measured <em>inside the test window</em>. The daily rule here trains on the test set, and the
 daily assertion, comparing feature dates, passes it.</p>
 <p><code>rolling_origin_period_cv</code> therefore states the rule on the label: a training row is
@@ -8434,11 +8384,14 @@ than asserted.</p>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">embargo_rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># Compare the safe (embargoed) split against the unsafe one to measure, rather</span>
+<span class="c1"># than merely assert, what the embargo costs or buys on this dataset.</span>
 <span class="k">for</span> <span class="n">embargo</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
     <span class="n">folds</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">rolling_origin_period_cv</span><span class="p">(</span><span class="n">week_df</span><span class="p">,</span> <span class="n">N_SPLITS</span><span class="p">,</span> <span class="n">HORIZON_MONTHS</span><span class="p">,</span> <span class="n">MIN_TRAIN_MONTHS</span><span class="p">,</span>
                                         <span class="n">embargo</span><span class="o">=</span><span class="n">embargo</span><span class="p">)</span>
     <span class="n">baselines</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">period_baseline_board</span><span class="p">(</span><span class="n">week_df</span><span class="p">,</span> <span class="n">folds</span><span class="p">)</span>
     <span class="n">matrix</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">build_period_matrix</span><span class="p">(</span><span class="n">week_df</span><span class="p">,</span> <span class="s2">"history"</span><span class="p">)</span>
+    <span class="c1"># RF cannot take NaN, so impute with the (training-fold) median before fitting.</span>
     <span class="n">matrix</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">PeriodMatrix</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">median</span><span class="p">()),</span> <span class="n">matrix</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">matrix</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span>
                              <span class="n">matrix</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">matrix</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">evaluate_period_folds</span><span class="p">(</span>
@@ -8538,10 +8491,8 @@ period assertion rejects the un-embargoed split: fold_1_2020-07-22: a training l
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The embargo removes <strong>100 of 5,381 training rows (1.9%)</strong>, and — as measured, not as hoped
-— the un-embargoed split does not score <em>better</em>; its MAE is slightly worse. On this
-dataset the overlapping rows are noise rather than an oracle.</p>
-<p>That does not say the embargo is unnecessary. Whether contamination inflates a score
+<p>The embargo removes <strong>100 of 5,381 training rows (1.9%)</strong>, and the un-embargoed split does not score <em>better</em>; its MAE is slightly worse. On this dataset the overlapping rows are noise rather than an oracle.</p>
+<p>This does not mean the embargo is unnecessary. Whether contamination inflates a score
 depends on how much signal the overlapping rows carry, which varies by dataset, model and
 fold; here they are few and the target is noisy, so the contamination has nothing to give.
 The embargo is a correctness property, not a performance optimisation, and a protocol that
@@ -8558,9 +8509,11 @@ holds only when the leak happens to be harmless is not a protocol. It stays on.<
 <div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">folds</span><span class="p">,</span> <span class="n">baselines</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">protocol</span><span class="p">(</span><span class="n">week_df</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Build the "official" (embargoed) folds used by every model board from here on.</span>
+<span class="n">folds</span><span class="p">,</span> <span class="n">baselines</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">protocol</span><span class="p">(</span><span class="n">week_df</span><span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">fold</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span> <span class="k">for</span> <span class="n">fold</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">]))</span>
 
+<span class="c1"># Re-confirm split integrity on the exact folds used downstream.</span>
 <span class="k">for</span> <span class="n">fold</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">:</span>
     <span class="n">pr</span><span class="o">.</span><span class="n">assert_period_split_integrity</span><span class="p">(</span><span class="n">week_df</span><span class="p">,</span> <span class="n">fold</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"split integrity: every fold's training labels were measured strictly before its "</span>
@@ -8683,7 +8636,7 @@ comparable. The monthly folds are the warning sign: 84–130 test rows against a
 matrix, so every monthly number in §5.2 is a small-sample estimate and labelled as one.</p>
 <h3 id="4.3-Baselines-have-to-be-re-set">4.3 Baselines have to be re-set<a class="anchor-link" href="#4.3-Baselines-have-to-be-re-set">¶</a></h3><p>Predicting zero is a strong competitor at daily grain because the target's mean is
 0.002 kg, and it weakens as the period lengthens and seasonal drift accumulates. In the
-same move, <strong>calendar climatology gets much stronger</strong> — over a month, "what does a hive
+same move, <strong>calendar climatology gets much stronger</strong>: over a month, "what does a hive
 in Germany usually do in July" is most of the answer. Scoring against predict-zero alone
 would let a model post a large skill score for learning only that July gains and November
 loses. <code>period_baselines</code> adds <code>month_climatology</code> and <code>hive_month_climatology</code>, and the
@@ -8699,14 +8652,15 @@ skill denominator is the best of all six.</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">board</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Combine the naive-baseline boards for both grains into one comparable table.</span>
+<span class="n">board</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span>
     <span class="n">ev</span><span class="o">.</span><span class="n">fold_summary</span><span class="p">(</span><span class="n">baselines</span><span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">grain</span><span class="o">=</span><span class="s2">"week"</span><span class="p">),</span>
     <span class="n">ev</span><span class="o">.</span><span class="n">fold_summary</span><span class="p">(</span><span class="n">month_baselines</span><span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">grain</span><span class="o">=</span><span class="s2">"month"</span><span class="p">),</span>
 <span class="p">])</span>
 <span class="n">display</span><span class="p">(</span><span class="n">board</span><span class="p">[[</span><span class="s2">"grain"</span><span class="p">,</span> <span class="s2">"model"</span><span class="p">,</span> <span class="s2">"mae_mean"</span><span class="p">,</span> <span class="s2">"mae_sd"</span><span class="p">,</span> <span class="s2">"rmse_mean"</span><span class="p">,</span> <span class="s2">"r2_mean"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">]]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 
 <span class="k">for</span> <span class="n">grain</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">"week"</span><span class="p">,</span> <span class="n">baselines</span><span class="p">),</span> <span class="p">(</span><span class="s2">"month"</span><span class="p">,</span> <span class="n">month_baselines</span><span class="p">)):</span>
-    <span class="n">best</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"model"</span><span class="p">)</span><span class="o">.</span><span class="n">mae</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"model"</span><span class="p">)</span><span class="o">.</span><span class="n">mae</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>  <span class="c1"># cheapest naive rule for this grain</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">grain</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">: best naive = </span><span class="si">{</span><span class="n">best</span><span class="si">}</span><span class="s2"> at MAE </span><span class="si">{</span><span class="n">frame</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'fold'</span><span class="p">)</span><span class="o">.</span><span class="n">mae</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> kg"</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -8892,7 +8846,7 @@ month: best naive = month_climatology at MAE 4.862 kg
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p><strong>The bar moves, and at month grain it moves to a different rule.</strong> Weekly, predicting
 zero still wins (MAE 1.98). Monthly, <code>month_climatology</code> takes over (MAE 5.17 against
-predict-zero's 5.25) — the crossover predicted above, arriving where the seasonal signal
+predict-zero's 5.25). The crossover predicted above, arriving where the seasonal signal
 starts to dominate the period.</p>
 <p>Persistence remains the worst rule at both grains (weekly R² −0.80, monthly −1.55). The
 lag-1 anti-persistence the daily milestone found is not a daily artifact: it survives
@@ -8908,8 +8862,7 @@ aggregation, so it is a property of the colony weight series itself.</p>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="5.-Models">5. Models<a class="anchor-link" href="#5.-Models">¶</a></h2><p>Same protocol as the daily milestone: every model on the same rolling-origin folds,
-reporting <strong>skill score</strong> — percentage reduction in MAE against that fold's best naive
-predictor.</p>
+reporting <strong>skill score</strong> which is the percentage reduction in MAE against that fold's best naive predictor.</p>
 <h3 id="5.1-The-weekly-model-board">5.1 The weekly model board<a class="anchor-link" href="#5.1-The-weekly-model-board">¶</a></h3>
 </div>
 </div>
@@ -8922,7 +8875,8 @@ predictor.</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">EXPERIMENTS</span> <span class="o">=</span> <span class="p">[</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># (label, feature set, model name) for every experiment on the model board below.</span>
+<span class="n">EXPERIMENTS</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="s2">"history / RF"</span><span class="p">,</span>                         <span class="s2">"history"</span><span class="p">,</span>                     <span class="s2">"rf"</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">"history+sensors / RF"</span><span class="p">,</span>                 <span class="s2">"history+sensors"</span><span class="p">,</span>             <span class="s2">"rf"</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">"history+sensors+events / RF"</span><span class="p">,</span>          <span class="s2">"history+sensors+events"</span><span class="p">,</span>      <span class="s2">"rf"</span><span class="p">),</span>
@@ -8935,10 +8889,15 @@ predictor.</p>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">model_board</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">folds</span><span class="p">,</span> <span class="n">baselines</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Score every (feature set, model) combination in EXPERIMENTS on the same folds.</span>
+
+<span class="sd">    Returns one concatenated results frame so every rung can be compared with</span>
+<span class="sd">    a single `ev.fold_summary` call.</span>
+<span class="sd">    """</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">feature_set</span><span class="p">,</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">EXPERIMENTS</span><span class="p">:</span>
         <span class="n">built</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">build_period_matrix</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">feature_set</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">NATIVE_NAN_MODELS</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">NATIVE_NAN_MODELS</span><span class="p">:</span>  <span class="c1"># RF and linear cannot take NaN</span>
             <span class="n">built</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">PeriodMatrix</span><span class="p">(</span><span class="n">built</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">built</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">median</span><span class="p">()),</span> <span class="n">built</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">built</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span>
                                     <span class="n">built</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">built</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">evaluate_period_folds</span><span class="p">(</span>
@@ -9087,8 +9046,7 @@ predictor.</p>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p><strong>A single-stage model beats the naive bar for the first time in this project.</strong> Random
-Forest on history features alone reaches MAE 1.702 against a naive 1.960 — <strong>+8.7% skill</strong>,
-R² 0.145. The daily milestone's best single-stage result was −6%.</p>
+Forest on history features alone reaches MAE 1.702 against a naive 1.960, which is <strong>+8.7% skill</strong>, R² 0.145. The daily milestone's best single-stage result was −6%.</p>
 <p>Three secondary readings, each inverting something from the daily work:</p>
 <ul>
 <li><strong>Sensors, events and hive context all hurt.</strong> <code>history</code> is the best rung; sensor
@@ -9110,7 +9068,7 @@ it was not. A smoothed weekly target has more linear structure to find.</li>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="5.2-The-monthly-board-%E2%80%94-and-why-it-is-reported-with-a-caveat">5.2 The monthly board — and why it is reported with a caveat<a class="anchor-link" href="#5.2-The-monthly-board-%E2%80%94-and-why-it-is-reported-with-a-caveat">¶</a></h3>
+<h3 id="5.2-The-monthly-board,-and-its-caveat">5.2 The monthly board, and its caveat<a class="anchor-link" href="#5.2-The-monthly-board,-and-its-caveat">¶</a></h3>
 </div>
 </div>
 </div>
@@ -9122,7 +9080,8 @@ it was not. A smoothed weekly target has more linear structure to find.</li>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">month_board</span> <span class="o">=</span> <span class="n">model_board</span><span class="p">(</span><span class="n">month_df</span><span class="p">,</span> <span class="n">month_folds</span><span class="p">,</span> <span class="n">month_baselines</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Same board, run at month grain on the month-specific folds and baselines.</span>
+<span class="n">month_board</span> <span class="o">=</span> <span class="n">model_board</span><span class="p">(</span><span class="n">month_df</span><span class="p">,</span> <span class="n">month_folds</span><span class="p">,</span> <span class="n">month_baselines</span><span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">ev</span><span class="o">.</span><span class="n">fold_summary</span><span class="p">(</span><span class="n">month_board</span><span class="p">)[</span>
     <span class="p">[</span><span class="s2">"model"</span><span class="p">,</span> <span class="s2">"mae_mean"</span><span class="p">,</span> <span class="s2">"mae_sd"</span><span class="p">,</span> <span class="s2">"rmse_mean"</span><span class="p">,</span> <span class="s2">"r2_mean"</span><span class="p">,</span> <span class="s2">"skill_mean"</span><span class="p">,</span> <span class="s2">"skill_sd"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">]</span>
 <span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
@@ -9278,15 +9237,14 @@ it was not. A smoothed weekly target has more linear structure to find.</li>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p>Monthly Random Forest on the full feature rung reaches <strong>+12.3% skill (sd 2.5%)</strong> with
-R² 0.281 — nominally the notebook's best score, and remarkably consistent across folds.
-Every RF rung clears +8.6%; every HistGB rung is negative.</p>
+R² 0.281, which is nominally the notebook's best score, and remarkably consistent across folds. Every RF rung clears +8.6%; every HistGB rung is negative.</p>
 <p>Two things differ from the weekly board and neither should be over-read: sensors, events
 and hive context <em>help</em> here where they hurt at week grain, and the fold-to-fold skill sd
 is a quarter of the weekly figure. Both are what a smaller, more strongly seasonal sample
-tends to produce — with 8 rows per hive the model has little to do but learn the seasonal
+tends to produce; with 8 rows per hive the model has little to do but learn the seasonal
 curve, and every fold agrees about that curve.</p>
 <p>It rests on <strong>622 rows, 433 of them ever scored, across four folds averaging 108 test rows
-each</strong> — roughly six observations per feature at 19 features, and the full rung uses 40.
+each</strong>: roughly six observations per feature at 19 features, and the full rung uses 40.
 The small sd is not the reassurance it looks like: four folds from 3.5 years of one
 country's weather are not four independent samples of "a year". Monthly is <em>promising and
 underpowered</em>; weekly is the grain this dataset can support.</p>
@@ -9301,7 +9259,7 @@ underpowered</em>; weekly is the grain this dataset can support.</p>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="5.3-Three-framings,-with-the-threshold-re-derived">5.3 Three framings, with the threshold re-derived<a class="anchor-link" href="#5.3-Three-framings,-with-the-threshold-re-derived">¶</a></h3><p>The daily milestone's central table compares an oracle-gated routine model (upper bound
-only — its test rows are selected using the label) against a deployable two-stage pipeline.
+only as its test rows are selected using the label) against a deployable two-stage pipeline.
 The same comparison at week grain, with the threshold re-derived to 11.1 kg per §3.2 rather
 than carried over at 5 kg:</p>
 </div>
@@ -9316,10 +9274,13 @@ than carried over at 5 kg:</p>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">framing_rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># For each fold, compare three framings: a plain single-stage regressor, a</span>
+<span class="c1"># two-stage (classify-then-regress) pipeline in its hard-gated and blended</span>
+<span class="c1"># variants, and the oracle-gated upper bound.</span>
 <span class="k">for</span> <span class="n">fold</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">:</span>
     <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">fold</span><span class="o">.</span><span class="n">train_index</span><span class="p">],</span> <span class="n">matrix</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">fold</span><span class="o">.</span><span class="n">train_index</span><span class="p">]</span>
     <span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">fold</span><span class="o">.</span><span class="n">test_index</span><span class="p">],</span> <span class="n">matrix</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">fold</span><span class="o">.</span><span class="n">test_index</span><span class="p">]</span>
-    <span class="n">bar</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">baselines</span><span class="p">[</span><span class="n">baselines</span><span class="o">.</span><span class="n">fold</span> <span class="o">==</span> <span class="n">fold</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">mae</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+    <span class="n">bar</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">baselines</span><span class="p">[</span><span class="n">baselines</span><span class="o">.</span><span class="n">fold</span> <span class="o">==</span> <span class="n">fold</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">mae</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>  <span class="c1"># this fold's naive bar</span>
 
     <span class="n">single</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">make_regressor</span><span class="p">(</span><span class="s2">"rf"</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">SEED</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
     <span class="n">candidates</span> <span class="o">=</span> <span class="p">{</span>
@@ -9438,6 +9399,8 @@ than carried over at 5 kg:</p>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">classifier_rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># Train the extreme/non-extreme classifier per fold and score it against the</span>
+<span class="c1"># same fold's held-out weeks.</span>
 <span class="k">for</span> <span class="n">fold</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">:</span>
     <span class="n">y_train</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">fold</span><span class="o">.</span><span class="n">train_index</span><span class="p">]</span>
     <span class="n">y_test</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">fold</span><span class="o">.</span><span class="n">test_index</span><span class="p">]</span>
@@ -9550,14 +9513,14 @@ than carried over at 5 kg:</p>
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p><strong>The two-stage pipeline is worth more at week grain than at day grain.</strong> The hard-gated
 version reaches MAE 1.630 and <strong>+15.2% skill</strong>, against the daily milestone's +5.9%. The
-blended variant is indistinguishable (+14.8%), itself informative — at daily grain the
-blend was clearly better because a 30%-confident extreme day contributed proportionally;
+blended variant is indistinguishable (+14.8%), itself informative since at daily grain the
+blend was clearly better (a 30%-confident extreme day contributed proportionally);
 at week grain the classifier is confident enough that hard routing costs nothing.</p>
 <p>The gap between the oracle-gated framing and the deployable two-stage number is much
 narrower here than at daily grain (0.315 against 0.479 MAE). That gap is the price of not
 knowing in advance whether next week is extreme, and a stronger classifier shrinks it.</p>
 <p>The classifier is stronger: <strong>PR-AUC 0.23–0.44 against a no-skill rate of 0.009–0.055</strong>.
-Lift spans 5–42× only because the positive rate varies fivefold across folds — fold 4 is a
+Lift spans 5–42× only because the positive rate varies fivefold across folds. Fold 4 is a
 spring-summer window with 5.5% extreme weeks, fold 3 a summer-winter one with 0.9%. Lift
 is the wrong summary when the base rate moves that much; read PR-AUC against the fold's
 own no-skill rate.</p>
@@ -9574,6 +9537,8 @@ own no-skill rate.</p>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">stability_rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># Refit each model across five seeds to check whether the RF-vs-HistGB</span>
+<span class="c1"># ranking is a real effect or just seed noise.</span>
 <span class="k">for</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"rf"</span><span class="p">,</span> <span class="s2">"hist_gb"</span><span class="p">):</span>
     <span class="n">built</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">build_period_matrix</span><span class="p">(</span><span class="n">week_df</span><span class="p">,</span> <span class="s2">"history"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">NATIVE_NAN_MODELS</span><span class="p">:</span>
@@ -9595,6 +9560,8 @@ own no-skill rate.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"HistGB MAE range: </span><span class="si">{</span><span class="n">hgb_seeds</span><span class="o">.</span><span class="n">mae</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">hgb_seeds</span><span class="o">.</span><span class="n">mae</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"non-overlapping ranges: </span><span class="si">{</span><span class="n">ev</span><span class="o">.</span><span class="n">ranking_is_significant</span><span class="p">(</span><span class="n">rf_seeds</span><span class="p">,</span><span class="w"> </span><span class="n">hgb_seeds</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
+<span class="c1"># Leave-hives-out CV: does the model generalise to a colony it never trained</span>
+<span class="c1"># on, as opposed to a future week of a colony it has already seen?</span>
 <span class="n">hive_folds</span> <span class="o">=</span> <span class="n">ev</span><span class="o">.</span><span class="n">grouped_hive_cv</span><span class="p">(</span><span class="n">week_df</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">SEED</span><span class="p">)</span>
 <span class="n">hive_results</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">evaluate_period_folds</span><span class="p">(</span>
     <span class="n">matrix</span><span class="p">,</span> <span class="n">hive_folds</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">models</span><span class="o">.</span><span class="n">make_regressor</span><span class="p">(</span><span class="s2">"rf"</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">SEED</span><span class="p">),</span> <span class="s2">"rf"</span>
@@ -9825,16 +9792,13 @@ non-overlapping ranges: True
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The RF / HistGB ranking survives across seeds — the MAE ranges do not overlap — so <strong>the
+<p>The RF / HistGB ranking survives across seeds (the MAE ranges do not overlap) so <strong>the
 reversal against the daily §5.5 finding is real, not seed noise.</strong> Boosting wins at daily
 grain, the forest at week grain. Plausible reason is sample size: HistGradientBoosting's
 defaults are tuned for tens of thousands of rows and it is being handed 2,000.</p>
-<p>Leave-hives-out gives <strong>MAE 1.608 ± 0.125 and R² 0.374 ± 0.023 — better than the temporal
-folds</strong>, as the daily milestone also found. The model is not leaning on hive identity, and
-an uninstrumented hive is not a harder case than a future week of a known one. For
-deployment that is the result that matters.</p>
+<p>Leave-hives-out gives <strong>MAE 1.608 ± 0.125 and R² 0.374 ± 0.023</strong>. This is better than the temporal folds. The model is not leaning on hive identity, and an uninstrumented hive is not a harder case than a future week of a known one.</p>
 <p>Leave-hives-out has no temporal separation by construction: it answers "does this transfer
-to a new colony", not "does this transfer to next year". Two questions, two folds.</p>
+to a new colony", not "does this transfer to next year".</p>
 <h3 id="5.5-What-the-model-is-actually-using">5.5 What the model is actually using<a class="anchor-link" href="#5.5-What-the-model-is-actually-using">¶</a></h3>
 </div>
 </div>
@@ -9847,7 +9811,9 @@ to a new colony", not "does this transfer to next year". Two questions, two fold
 <div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">last_fold</span> <span class="o">=</span> <span class="n">folds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Fit the winning model on the last fold's training data and rank its</span>
+<span class="c1"># features by permutation importance on the held-out test set.</span>
+<span class="n">last_fold</span> <span class="o">=</span> <span class="n">folds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">winner</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">make_regressor</span><span class="p">(</span><span class="s2">"rf"</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">SEED</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
     <span class="n">matrix</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">last_fold</span><span class="o">.</span><span class="n">train_index</span><span class="p">],</span> <span class="n">matrix</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">last_fold</span><span class="o">.</span><span class="n">train_index</span><span class="p">]</span>
 <span class="p">)</span>
@@ -9860,7 +9826,8 @@ to a new colony", not "does this transfer to next year". Two questions, two fold
         <span class="n">xerr</span><span class="o">=</span><span class="n">importance</span><span class="o">.</span><span class="n">importance_sd</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#4c72b0"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">"increase in MAE when permuted"</span><span class="p">,</span>
        <span class="n">title</span><span class="o">=</span><span class="s2">"Permutation importance, weekly model (test set)"</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="n">display</span><span class="p">(</span><span class="n">importance</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -9990,17 +9957,16 @@ to a new colony", not "does this transfer to next year". Two questions, two fold
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><strong>The dominant feature has no daily analogue.</strong> <code>within_period_slope_kg_per_day</code> — the OLS
-trend of daily weight across the current week — is worth roughly 5× the next feature, where
+<p><strong>The dominant feature has no daily analogue.</strong> <code>within_period_slope_kg_per_day</code>, the OLS
+trend of daily weight across the current week, is worth roughly 5× the next feature, where
 the daily model's dominant feature was yesterday's change.</p>
 <p>The distinction is mechanical: yesterday's change is one noisy difference, while the
 within-week slope is a least-squares trend through 5–7 readings, estimating the same
-quantity — the colony's current rate of mass change — with far less variance. Next are
+rate of mass change with far less variance. Next are
 <code>within_period_weight_sd_kg</code> and <code>daily_change_max_abs_kg</code>, both measures of <em>how erratic</em>
 the week was rather than how much it gained.</p>
 <p>So the model is using the shape of the week, visible only because the daily rows were
-summarised rather than averaged away — an aggregation producing period means alone would
-have discarded the best predictor in the table.</p>
+summarised rather than averaged away.</p>
 <p>The daily milestone's collinearity caveat applies unchanged: permutation importance
 understates every member of a correlated group, and the weight chain is correlated by
 construction.</p>
@@ -10015,28 +9981,24 @@ construction.</p>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="5.6-Weather">5.6 Weather<a class="anchor-link" href="#5.6-Weather">¶</a></h3><p>Every feature above is a function of the hive's own past weight, so the model can only
-extrapolate a trend — nothing tells it next week is forecast to rain for five days. That is
-the largest missing input in the project, and the one with the clearest mechanism: a colony
-gains mass when bees fly, and bees fly when it is warm, dry and bright.</p>
-<p><code>data/honey_weather.parquet</code> fills it — 45,594 site-days of ERA5 reanalysis from the
+extrapolate a trend. Nothing tells the model that next week is forecast to rain for five days. That is the largest missing input in the project, and the one with the clearest mechanism: a colony gains mass when bees fly, and bees fly when it is warm, dry and bright.</p>
+<p><code>data/honey_weather.parquet</code> fills it: 45,594 site-days of ERA5 reanalysis from the
 Open-Meteo Historical Weather API, one series per distinct hive site, no missing days.
-Reanalysis rather than the GHCN-Daily station records the Milestone 4 plan named first:
+Reanalysis rather than the GHCN-Daily station records the Milestone 3 plan named first:
 34 sites across six degrees of longitude would each need a nearest-station search, a
 distance threshold and a gap-filling rule, and a gridded product removes all three. The
-cost is modelled values on a ~9 km grid rather than measurements.
-<code>scripts/pull_weather_snapshot.py</code> is the project's only network call; it has been run and
-its output is committed.</p>
+cost is modelled values on a ~9 km grid rather than measurements.</p>
 <p>The ladder below separates two things:</p>
 <ul>
 <li><strong><code>+weather_core</code> / <code>+weather</code></strong> carry the weather of the week being <em>forecast from</em>, all
 knowable on Sunday evening. Deployable.</li>
-<li><strong><code>+lookahead</code></strong> additionally carries the weather of the week being <em>forecast</em> — the
-ceiling a perfect seven-day forecast would reach, not a result. Labelled <code>UPPER BOUND</code>
+<li><strong><code>+lookahead</code></strong> additionally carries the weather of the week being <em>forecast</em>. The
+ceiling a perfect seven-day forecast would reach. Labelled <code>UPPER BOUND</code>
 below, and <code>weather.WEATHER_LOOKAHEAD_FEATURES</code> is registered with
 <code>periods.assert_no_period_leakage</code>, so a matrix built from it raises <code>PeriodLeakageError</code>
 unless the caller passes <code>allow=</code> and takes the label with it.</li>
 </ul>
-<p><code>weather_core</code> is five features, one per mechanism — radiation, rain, degree-days,
+<p><code>weather_core</code> is five features, one per mechanism: radiation, rain, degree-days,
 foraging days, wind. The full set is sixteen, and the result below is largely about the
 difference between those two numbers rather than about weather.</p>
 </div>
@@ -10050,8 +10012,10 @@ difference between those two numbers rather than about weather.</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">WEATHER_LADDER</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">weather_feature_sets</span><span class="p">(</span><span class="s2">"history"</span><span class="p">)</span>
-<span class="n">ALLOW</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">WEATHER_LOOKAHEAD_FEATURES</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Ladder of weather feature rungs, from none to the full deployable set plus</span>
+<span class="c1"># the look-ahead (labelled upper-bound) rung.</span>
+<span class="n">WEATHER_LADDER</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">weather_feature_sets</span><span class="p">(</span><span class="s2">"history"</span><span class="p">)</span>
+<span class="n">ALLOW</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">WEATHER_LOOKAHEAD_FEATURES</span><span class="p">)</span>  <span class="c1"># columns the leakage guard admits only here</span>
 
 <span class="n">weather_rows</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">rung</span><span class="p">,</span> <span class="n">names</span> <span class="ow">in</span> <span class="n">WEATHER_LADDER</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -10297,7 +10261,7 @@ difference between those two numbers rather than about weather.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><strong>Weather you already have is worth nothing, and a perfect forecast is worth about half a
+<p><strong>Weather we already have is worth nothing, and a perfect forecast is worth about half a
 point.</strong></p>
 <table>
 <thead>
@@ -10348,9 +10312,8 @@ point.</strong></p>
 </tbody>
 </table>
 <p>Three readings, and only the second is a gain.</p>
-<p><strong>Current-week weather adds nothing.</strong> +8.0% against +8.7% for no weather at all — inside
-a fold-to-fold sd of 17 points, so "no effect" rather than "a small loss". Unsurprising on
-reflection: the weight series <em>is</em> an instrument for the weather that just happened, and
+<p><strong>Current-week weather adds nothing.</strong> +8.0% against +8.7% for no weather at all: inside
+a fold-to-fold sd of 17 points, so "no effect" rather than "a small loss". The weight series <em>is</em> an instrument for the weather that just happened, and
 <code>within_period_slope_kg_per_day</code> has already read it.</p>
 <p><strong>A perfect forecast is worth +0.45 points, and that is the ceiling.</strong> The look-ahead rung
 reaches +9.1%, and on folds 2–4 alone +17.9% against +16.3%. A real seven-day forecast is
@@ -10359,11 +10322,8 @@ point on a base of 8.7. <strong>This decides whether the weather integration is 
 and it says no.</strong></p>
 <p><strong>Sixteen weather features do not fit in 3,012 rows.</strong> The full rung drops to −1.3%, and
 the whole loss is fold 1 (−14.3% → −50.4%) while folds 2–4 barely move. Fold 1 is the
-first expanding-window origin and trains on barely a year — a dimensionality result, not a
-weather result, and why the five-feature rung chosen before the board was run is the honest
-way to ask the question.</p>
-<p><code>weather-only</code> — weather plus seasonality terms, nothing about the hive — scores −36.6%.
-Whatever this model knows, it does not learn it from the sky.</p>
+first expanding-window origin and trains on barely a year. This is a result of dimensionality rather than weather, and why the five-feature rung chosen before the board was run is the honest way to ask the question.</p>
+<p><code>weather-only</code> scores −36.6%.</p>
 </div>
 </div>
 </div>
@@ -10375,17 +10335,16 @@ Whatever this model knows, it does not learn it from the sky.</p>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="6.-Results-and-Interpretation">6. Results and Interpretation<a class="anchor-link" href="#6.-Results-and-Interpretation">¶</a></h2><h3 id="6.1-Where-the-weekly-model-works-and-where-it-fails">6.1 Where the weekly model works and where it fails<a class="anchor-link" href="#6.1-Where-the-weekly-model-works-and-where-it-fails">¶</a></h3><p>Metrics pooled across all four folds' out-of-sample predictions, so every season is
-represented — the last fold alone covers January to July and contains 22 summer weeks.</p>
-<p><strong>The denominator is the decision here, and the first version of this notebook got it
-wrong.</strong> Skill is a ratio, and scoring every season against <em>one</em> fold-wide naive bar is
+represented. The last fold alone covers January to July and contains 22 summer weeks.</p>
+<p><strong>The denominator is the decision here.</strong> Skill is a ratio, and scoring every season against <em>one</em> fold-wide naive bar is
 not neutral when the target's variance is this seasonal: the annual bar carries summer's
 variance into the winter comparison and winter's into the summer one. Both columns are
-below — <code>skill_vs_naive</code> uses the best naive rule <em>within</em> each segment,
+below: <code>skill_vs_naive</code> uses the best naive rule <em>within</em> each segment,
 <code>skill_vs_pooled_naive</code> the single-bar convention originally published, kept so the size of
 the difference is visible rather than asserted.</p>
 <p><strong>Neither is universally right.</strong> Which to read depends on whether the segment is knowable
-before the forecast is made. A season is — a beekeeper choosing between this model and a
-rule of thumb in January is choosing <em>in January</em>. A |change| decile is not: defined by the
+before the forecast is made. A beekeeper choosing between this model and a
+rule of thumb in January is choosing <em>in January</em>. A |change| decile is not defined by the
 label, so a within-decile bar is a competitor that already knows the answer. Hence the
 within-segment column for seasons, the pooled column for deciles.</p>
 </div>
@@ -10401,6 +10360,9 @@ within-segment column for seasons, the pooled column for deciles.</p>
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">out_of_fold</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">oof_baselines</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="c1"># Collect every fold's held-out predictions (and the matching naive-baseline</span>
+<span class="c1"># predictions) into one pooled set, so segments can be scored out-of-fold</span>
+<span class="c1"># across the whole record rather than one fold at a time.</span>
 <span class="k">for</span> <span class="n">fold</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">:</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">make_regressor</span><span class="p">(</span><span class="s2">"rf"</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">SEED</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
         <span class="n">matrix</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">fold</span><span class="o">.</span><span class="n">train_index</span><span class="p">],</span> <span class="n">matrix</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">fold</span><span class="o">.</span><span class="n">train_index</span><span class="p">]</span>
@@ -10417,7 +10379,7 @@ within-segment column for seasons, the pooled column for deciles.</p>
 <span class="n">out_of_fold</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">out_of_fold</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">oof_baselines</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">blocks</span> <span class="ow">in</span> <span class="n">oof_baselines</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
-<span class="n">pooled_bar</span> <span class="o">=</span> <span class="n">baselines</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"fold"</span><span class="p">)</span><span class="o">.</span><span class="n">mae</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">pooled_bar</span> <span class="o">=</span> <span class="n">baselines</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"fold"</span><span class="p">)</span><span class="o">.</span><span class="n">mae</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="c1"># the single fold-wide naive bar</span>
 <span class="n">segmented</span> <span class="o">=</span> <span class="n">ev</span><span class="o">.</span><span class="n">segmented_report</span><span class="p">(</span>
     <span class="n">out_of_fold</span><span class="o">.</span><span class="n">y_true</span><span class="p">,</span> <span class="n">out_of_fold</span><span class="o">.</span><span class="n">y_pred</span><span class="p">,</span>
     <span class="n">out_of_fold</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">pr</span><span class="o">.</span><span class="n">PERIOD_END</span><span class="p">:</span> <span class="s2">"measurement_date"</span><span class="p">}),</span>
@@ -10522,7 +10484,9 @@ within-segment column for seasons, the pooled column for deciles.</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Winter"</span><span class="p">,</span> <span class="s2">"Spring"</span><span class="p">,</span> <span class="s2">"Summer"</span><span class="p">,</span> <span class="s2">"Autumn"</span><span class="p">]</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Bar chart contrasting the two ways of scoring seasonal skill: one annual</span>
+<span class="c1"># naive bar (the original, misleading convention) vs. a within-season bar.</span>
+<span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Winter"</span><span class="p">,</span> <span class="s2">"Spring"</span><span class="p">,</span> <span class="s2">"Summer"</span><span class="p">,</span> <span class="s2">"Autumn"</span><span class="p">]</span>
 <span class="n">plot</span> <span class="o">=</span> <span class="n">seasons</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"value"</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mf">3.8</span><span class="p">))</span>
@@ -10536,7 +10500,8 @@ within-segment column for seasons, the pooled column for deciles.</p>
 <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">"skill vs. naive (%)"</span><span class="p">,</span>
        <span class="n">title</span><span class="o">=</span><span class="s2">"Same model, same predictions — the denominator decides the seasonal story"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -10561,7 +10526,7 @@ within-segment column for seasons, the pooled column for deciles.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><strong>Both headline seasonal claims reverse.</strong> Same model, same predictions, same rows — only
+<p><strong>Both headline seasonal claims reverse.</strong> Same model, same predictions, same rows, only
 the denominator changes, and predicting zero is the best naive rule in every season, so no
 rule swapped in:</p>
 <table>
@@ -10615,9 +10580,7 @@ competitor); the −23.5% divided the same predictions by a bar winter's quiet h
 hard.</li>
 </ul>
 <p>This inverts the practical reading: the nectar flow is when a beekeeper would actually
-consult a forecast, and it is where the model adds most over what they could already guess.
-Section 7 is written from the corrected column, and <code>Milestone_4.ipynb</code> §6 and §7.2 carry
-the same defect at daily grain.</p>
+consult a forecast, and it is where the model adds most over what they could already guess.</p>
 </div>
 </div>
 </div>
@@ -10629,8 +10592,10 @@ the same defect at daily grain.</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">decile</span> <span class="o">=</span> <span class="n">segmented</span><span class="p">[</span><span class="n">segmented</span><span class="o">.</span><span class="n">segment</span> <span class="o">==</span> <span class="s2">"weight_change_decile"</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">decile</span><span class="p">[</span><span class="s2">"order"</span><span class="p">]</span> <span class="o">=</span> <span class="n">decile</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">"D"</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Skill by decile of |actual weekly change|, kept on the pooled bar since a</span>
+<span class="c1"># label-defined segment's own baseline already knows the answer (see prose above).</span>
+<span class="n">decile</span> <span class="o">=</span> <span class="n">segmented</span><span class="p">[</span><span class="n">segmented</span><span class="o">.</span><span class="n">segment</span> <span class="o">==</span> <span class="s2">"weight_change_decile"</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">decile</span><span class="p">[</span><span class="s2">"order"</span><span class="p">]</span> <span class="o">=</span> <span class="n">decile</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">"D"</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># sort D1..D10 numerically</span>
 <span class="n">decile</span> <span class="o">=</span> <span class="n">decile</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"order"</span><span class="p">)</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">decile</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">decile</span><span class="o">.</span><span class="n">skill_vs_pooled_naive</span><span class="p">,</span>
@@ -10638,7 +10603,8 @@ the same defect at daily grain.</p>
 <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Weekly model: skill vs. naive by |weight change| decile (pooled bar — see note)"</span><span class="p">,</span>
        <span class="n">xlabel</span><span class="o">=</span><span class="s2">"decile of |actual weekly change|"</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">"MAE reduction vs. best naive"</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="n">display</span><span class="p">(</span><span class="n">decile</span><span class="p">[[</span><span class="s2">"value"</span><span class="p">,</span> <span class="s2">"mae"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">,</span> <span class="s2">"baseline_rule"</span><span class="p">,</span>
                 <span class="s2">"skill_vs_pooled_naive"</span><span class="p">,</span> <span class="s2">"skill_vs_naive"</span><span class="p">]]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
 </pre></div>
@@ -10793,7 +10759,7 @@ the same defect at daily grain.</p>
 <p><strong>The decile view keeps the pooled bar, and the reason is the point of the whole
 correction.</strong> A |change| decile is defined by the label: predicting zero inside D1 scores
 MAE 0.04 kg <em>because D1 is the set of weeks where almost nothing happened</em>, so the naive
-rule is handed the answer by the segment definition — which is why <code>skill_vs_naive</code> reads
+rule is handed the answer by the segment definition, which is why <code>skill_vs_naive</code> reads
 −1500% there. That column is printed above only to show why it cannot be read.</p>
 <p>On the pooled bar the decile story is unchanged: skill is positive on D1–D7, near zero on
 D8, negative on D9–D10 and worst on the largest (−232%). <strong>This model beats its baseline by
@@ -10813,7 +10779,9 @@ are in D9 and D10.</strong></p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">best_week</span> <span class="o">=</span> <span class="n">ev</span><span class="o">.</span><span class="n">fold_summary</span><span class="p">(</span><span class="n">week_board</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Pull each grain's best single-stage result plus the weekly two-stage result</span>
+<span class="c1"># into one table, alongside the daily milestone's already-published numbers.</span>
+<span class="n">best_week</span> <span class="o">=</span> <span class="n">ev</span><span class="o">.</span><span class="n">fold_summary</span><span class="p">(</span><span class="n">week_board</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">best_month</span> <span class="o">=</span> <span class="n">ev</span><span class="o">.</span><span class="n">fold_summary</span><span class="p">(</span><span class="n">month_board</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">two_stage_week</span> <span class="o">=</span> <span class="n">framings</span><span class="p">[</span><span class="n">framings</span><span class="o">.</span><span class="n">framing</span> <span class="o">==</span> <span class="s2">"two-stage, hard gate"</span><span class="p">]</span>
 
@@ -10843,7 +10811,8 @@ are in D9 and D10.</strong></p>
 <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Skill vs. best naive baseline, by grain and framing"</span><span class="p">,</span>
        <span class="n">ylabel</span><span class="o">=</span><span class="s2">"MAE reduction vs. best naive"</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -10954,27 +10923,22 @@ are in D9 and D10.</strong></p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><strong>Raw MAE is not comparable across grains</strong> — a weekly error of 1.7 kg and a daily error of
-0.48 kg measure different quantities, and the weekly target is four times more variable to
-begin with. Skill is the comparable column, because each grain is scored against its own
-re-derived naive bar. On it the ordering is clear: <strong>week (+15.2% two-stage, +8.7%
-single-stage) beats day (+5.9% two-stage, −6.0% single-stage)</strong>, and month is nominally
-best on single-stage skill but rests on 622 rows.</p>
+<p><strong>Raw MAE is not comparable across grains</strong>. There is a weekly error of 1.7 kg and a daily error of 0.48 kg measure different quantities, and the weekly target is four times more variable to begin with. Skill is the comparable column, because each grain is scored against its own re-derived naive bar. On it the ordering is clear: <strong>week (+15.2% two-stage, +8.7% single-stage) beats day (+5.9% two-stage, −6.0% single-stage)</strong>, and month is nominally best on single-stage skill but rests on 622 rows.</p>
 <h2 id="7.-Conclusions-and-Recommendations">7. Conclusions and Recommendations<a class="anchor-link" href="#7.-Conclusions-and-Recommendations">¶</a></h2><h3 id="7.1-What-we-can-claim">7.1 What we can claim<a class="anchor-link" href="#7.1-What-we-can-claim">¶</a></h3><ul>
-<li><strong>Re-graining to a week is the largest improvement in this project so far</strong> — +15.2%
-two-stage skill against +5.9% at daily grain — and <strong>the first grain at which a
+<li><strong>Re-graining to a week is the largest improvement in this project so far</strong>:+15.2%
+two-stage skill against +5.9% at daily grain. <strong>It's the first grain at which a
 single-stage model beats predicting zero</strong> (+8.7%). The daily negative result was a
 property of the horizon, not of the models.</li>
 <li><strong>The target's anchor decides the outcome.</strong> Period mean weight rather than last observed
 day flips the result from losing to beating the baseline, at both grains (§2.3).</li>
-<li><strong>The dominant predictor changes</strong> — yesterday's change at daily grain, the within-week
+<li><strong>The dominant predictor changes</strong>: yesterday's change at daily grain, the within-week
 OLS slope at weekly, worth roughly 5× the next feature (§5.5).</li>
 <li><strong>Random Forest beats boosting here</strong>, reversing the daily finding across five seeds with
-non-overlapping ranges, and <strong>the model still generalises to unseen hives</strong> —
+non-overlapping ranges, and <strong>the model still generalises to unseen hives</strong>:
 leave-hives-out MAE 1.608 ± 0.125 against a temporal 1.702 (§5.4).</li>
 <li><strong>The model is at its best during the nectar flow, not dormancy.</strong> Against a within-season
 competitor: Spring +20.7%, Summer +16.4%, Autumn −3.8%, Winter −17.5% (§6.1).</li>
-<li><strong>Weather does not help, and we now know the ceiling</strong> — +9.1% given a <em>perfect</em> forecast
+<li><strong>Weather does not help, and we now know the ceiling</strong>: +9.1% given a <em>perfect</em> forecast
 against +8.7% with none, nothing from current-week weather (§5.6).</li>
 </ul>
 <h3 id="7.2-What-we-cannot-claim">7.2 What we cannot claim<a class="anchor-link" href="#7.2-What-we-cannot-claim">¶</a></h3><ul>
@@ -10988,45 +10952,41 @@ inflate the score on this dataset. A fact about these 100 boundary rows, not a g
 <li><strong>Weight change is still not honey yield.</strong> At these grains a harvest lands <em>inside</em> the
 forecast window and subtracts 10–20 kg of exactly the quantity predicted.</li>
 </ul>
-<h3 id="7.3-Attempted-next-steps-%E2%80%94-and-what-came-of-them">7.3 Attempted next steps — and what came of them<a class="anchor-link" href="#7.3-Attempted-next-steps-%E2%80%94-and-what-came-of-them">¶</a></h3><p>These five were written as recommendations. <code>Milestone_5.ipynb</code> carried out four and
-substituted a power analysis for the fifth. <strong>Four of the five do not survive being done</strong>,
-so the outcomes are recorded here rather than left as open suggestions.</p>
-<ol>
-<li><strong>Model gross gain, not net weight change</strong> — <em>tried; the mechanism is not in the data.</em>
+<h3 id="7.3-Attempted-improvements,-and-what-came-of-them">7.3 Attempted improvements, and what came of them<a class="anchor-link" href="#7.3-Attempted-improvements,-and-what-came-of-them">¶</a></h3><ol>
+<li><strong>Model gross gain, not net weight change</strong>: <em>tried; the mechanism is not in the data.</em>
 The idea was to reconstruct removed mass from a step change coincident with a logged
 harvest. The step changes exist (230 detected removals, 51 hives, median 7.3 kg, 68% in
 May–August); the coincidence does not. Logged <code>honey</code> events and sustained weight drops
 agree on <strong>5–10%</strong> in both directions, barely moving as the match window widens from 1
-day to 14, and several logged events coincide with weight <em>increases</em> of 30–39 kg — the
+day to 14, and several logged events coincide with weight <em>increases</em> of 30–39 kg. The
 log records that the beekeeper did something about honey, not that honey left. From the
 weight series alone the gross target scores <strong>+1.9%</strong> against net change's +7.6%:
 physically the right quantity, and the harder one. Still the right idea, but it needs an
-event log with removed mass in it — a request to the publishers, not a modelling task.</li>
-<li><strong>Give the summer regime its own model</strong> — <em>tried; no gain, and the target was a
+event log with removed mass in it which is not available in our data.</li>
+<li><strong>Give the summer regime its own model</strong>: <em>tried; no gain, and the target was a
 mirage.</em> Three gating schemes, all below pooled (+6.7%, +5.2%, +5.1% against +7.6%),
-consistently across folds. The failure mode it attacked — "−24% in summer" — is the
-scoring artifact corrected in §6.1. Summer was never the problem.</li>
-<li><strong>Add weather</strong> — <em>done; see §5.6.</em> The data layer is built and committed. It is the only
+consistently across folds. The failure mode it attacked ("−24% in summer") is the
+scoring artifact corrected in §6.1. Summer was not the true problem.</li>
+<li><strong>Add weather</strong>: <em>done; see §5.6.</em> The data layer is built and committed. It is the only
 one of the five that produced a gain, and the gain is an upper bound of half a point,
 which is not worth a forecast integration.</li>
-<li><strong>Make the extreme threshold per-hive relative</strong> — <em>tried; it is worse.</em> The comparison
+<li><strong>Make the extreme threshold per-hive relative</strong>: <em>tried; it is worse.</em> The comparison
 that motivated it was not a comparison: PR-AUC is bounded below by the positive rate, and
 the 5-MAD rule fires on 12.95% of weeks against the absolute rule's 3.05%. Matched to the
 same rate, the absolute label reaches <strong>PR-AUC 0.32 and the relative label 0.20</strong>, and
 end-to-end two-stage regression scores +5.9% against −1.9%. Removing the hive-size
 shortcut makes the label more meaningful and the task less learnable; whether that trade
-is worth making depends on what the alert is for. "Should probably replace" is not
-supported.</li>
-<li><strong>More years before trusting the monthly result</strong> — <em>cannot be done; the archive ends
+is worth making depends on what the alert is for.</li>
+<li><strong>More years before trusting the monthly result</strong>: <em>cannot be done; the archive ends
 2022-12-30.</em> Substituted a hive-subsampling power curve: ~480 monthly rows are needed
 against the 622 available, so on sampling variability alone the monthly figure clears
-zero — but the curve is not monotone, and a study drawing 40% of this fleet would have
+zero; but the curve is not monotone, and a study drawing 40% of this fleet would have
 concluded "no skill" half the time. <strong>More hives are not the binding constraint.</strong> Every
 subsample sees the same three summers, so hive resampling cannot measure what actually
 binds, which is independent <em>seasons</em>.</li>
 </ol>
 <p><strong>The one item that came out of doing these</strong>, not on the list above: re-score every
-segmented table in <code>Milestone_4.ipynb</code> against within-segment baselines, as §6.1 does here.
+segmented table against within-segment baselines, as §6.1 does here.
 The daily notebook's "+51% autumn / +34% winter / −95% summer" carries the same defect, and
 its §7.2 advice to beekeepers is derived from it.</p>
 </div>
@@ -11051,8 +11011,11 @@ its §7.2 advice to beekeepers is derived from it.</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [23]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">full_weeks</span> <span class="o">=</span> <span class="n">week_df</span><span class="p">[</span><span class="n">week_df</span><span class="o">.</span><span class="n">days_observed</span> <span class="o">==</span> <span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">example</span> <span class="o">=</span> <span class="n">full_weeks</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="nb">len</span><span class="p">(</span><span class="n">full_weeks</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">T</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Inspect one fully-observed week (all 7 days reported) end to end: every</span>
+<span class="c1"># column's value, plus which columns are forbidden as features vs. in the</span>
+<span class="c1"># baseline "history" feature rung.</span>
+<span class="n">full_weeks</span> <span class="o">=</span> <span class="n">week_df</span><span class="p">[</span><span class="n">week_df</span><span class="o">.</span><span class="n">days_observed</span> <span class="o">==</span> <span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">full_weeks</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="nb">len</span><span class="p">(</span><span class="n">full_weeks</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># a representative row, transposed for display</span>
 <span class="n">example</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"value"</span><span class="p">]</span>
 <span class="n">display</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">45</span><span class="p">))</span>
 
@@ -11403,16 +11366,16 @@ its §7.2 advice to beekeepers is derived from it.</p>
 feeding each prediction back as the next day's input. Legitimate, and it preserves the full
 26,215-row training set. Not pursued: the daily model does not beat predicting zero at
 step 1, so errors compound from a base already worse than a constant, and the recursion
-needs the whole feature vector predicted forward — one modelling problem becomes eight.</p>
+needs the whole feature vector predicted forward: one modelling problem becomes eight.</p>
 <p><strong>Fixed-endpoint cumulative forecasting.</strong> The question a beekeeper actually asks is not
-"how much next week" but "how much by the August harvest" — a shrinking-horizon problem
-needing its own target, its own baselines (climatology-to-date is strong), a horizon
+"how much next week" but "how much by the August harvest". A shrinking-horizon problem
+needs its own target, its own baselines (climatology-to-date is strong), a horizon
 feature, and metrics per weeks-remaining, since a 12-week-out and a 1-week-out forecast are
-not the same task. Most direct beekeeper value, and the natural sequel.</p>
+not the same task.</p>
 <p><strong>Per-hive relative targets.</strong> Dividing the change by the hive's own scale would make a
 nucleus and a production hive comparable and fix the absolute-threshold problem in one
 move, but it changes what MAE means and breaks comparability with every number in
-<code>Milestone_4.ipynb</code>, so it belongs in a milestone that can re-baseline everything.</p>
+Milestone 3, so it belongs in a milestone that can re-baseline everything.</p>
 <h2 id="Appendix-C-%E2%80%94-Reproduction-checklist">Appendix C — Reproduction checklist<a class="anchor-link" href="#Appendix-C-%E2%80%94-Reproduction-checklist">¶</a></h2><table>
 <thead>
 <tr>
