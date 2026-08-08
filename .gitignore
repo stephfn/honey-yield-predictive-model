@@ -228,6 +228,24 @@ __marimo__/
 # Data folder (locally download instead of storing in git)
 data/
 
+# ...except the committed snapshots the milestone reproduces from. These are small
+# (3 MB + 5 MB, ZSTD) and are the reason the notebook runs with no VPN and no database
+# file. Provenance and the open licensing question are recorded in data/README.md.
+!data/
+!data/honey_daily_source.parquet
+!data/honey_model.parquet
+!data/honey_weather.parquet
+!data/README.md
+data/*.duckdb
+data/duckdb_temp/
+# Per-site resume cache for scripts/pull_weather_snapshot.py. Intermediate; the merged
+# honey_weather.parquet above is the artifact.
+data/_weather_cache/
+
+# Result tables written by scripts/run_*.py and rendered by the notebook. Committed so a
+# reader can check a number in the write-up against the run that produced it.
+!results/
+
 # DuckDB database
 *.duckdb
 

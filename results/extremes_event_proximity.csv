@@ -1,0 +1,13 @@
+group,event,n_rows,n_with_event_logged,pct_with_event_logged,median_days,pct_within_1_day,pct_within_7_days
+extreme,honey,445,269,60.45,305.67,7.81,15.99
+extreme,feeding,445,265,59.55,84.74,13.21,23.02
+extreme,swarming,445,129,28.99,301.81,1.55,1.55
+extreme,treatment,445,136,30.56,135.76,10.29,19.85
+extreme,died,445,96,21.57,250.46,1.04,1.04
+extreme,queencell,445,169,37.98,168.01,10.65,16.57
+routine,honey,25770,12723,49.37,236.91,8.68,15.11
+routine,feeding,25770,15725,61.02,141.9,8.69,13.6
+routine,swarming,25770,7501,29.11,349.09,4.07,5.45
+routine,treatment,25770,11363,44.09,205.1,7.41,10.91
+routine,died,25770,3939,15.29,311.33,1.85,2.74
+routine,queencell,25770,8806,34.17,309.84,9.97,12.4

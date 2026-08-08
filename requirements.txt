@@ -1,0 +1,28 @@
+# Milestone 4 / 5 environment. Developed and verified on Python 3.13.5.
+#
+#   pip install -r requirements.txt
+#
+# Versions are pinned to what the committed results were produced with. Only
+# python-dotenv and the `quack` DuckDB extension are needed for the optional remote
+# path (scripts/pull_source_snapshot.py); the only other network step,
+# scripts/pull_weather_snapshot.py, uses the standard library. Nothing needed to
+# reproduce a notebook touches a network.
+
+duckdb==1.5.3
+pandas==2.2.3
+numpy==2.1.3
+scikit-learn==1.6.1
+pyarrow==19.0.0
+matplotlib==3.10.0
+seaborn==0.13.2
+
+# Native NaN handling for the 23-35% sensor gaps. Optional: honeymodel.models falls back
+# to HistGradientBoostingRegressor, which handles NaN the same way, if this is absent.
+lightgbm==4.5.0
+
+# Only for scripts/pull_source_snapshot.py (reads .env for the remote DuckDB credentials).
+python-dotenv==1.0.1
+
+# Notebook execution and export.
+jupyter==1.1.1
+nbconvert==7.16.4

@@ -1,0 +1,6 @@
+definition,extremes,extreme_pct,routine_rows,routine_mae_oracle_gated,routine_r2_oracle_gated,classifier_pr_auc,classifier_roc_auc,pr_auc_lift_over_no_skill
+absolute 3 kg,834,3.181,25381,0.2387,0.251,0.3154,0.8676,8.82
+absolute 5 kg,445,1.698,25770,0.3005,0.2274,0.2276,0.8477,12.91
+absolute 7 kg,281,1.072,25934,0.3303,0.2107,0.1833,0.8472,15.7
+absolute 10 kg,178,0.679,26037,0.3565,0.2009,0.1435,0.8582,18.15
+hive-relative 5 MAD,2873,10.959,23342,0.1425,0.1691,0.523,0.8579,4.34

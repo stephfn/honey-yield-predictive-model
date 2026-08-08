@@ -1,0 +1,5 @@
+explanation,extremes_flagged,pct_of_extremes,total_extremes
+implausible weight (below 5 kg floor),19,4.27,445
+hive-local robust outlier (>5 MAD),122,27.42,445
+drop-then-recovery (dropout / re-tare),26,5.84,445
+any data-quality flag,138,31.01,445

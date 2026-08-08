@@ -1,0 +1,17 @@
+feature,non_null_pct,mean,sd
+wx_temperature_2m_max_mean,100.0,14.903,7.136
+wx_temperature_2m_max_max,100.0,18.35,7.734
+wx_temperature_2m_min_mean,100.0,7.294,5.615
+wx_temperature_2m_min_min,100.0,4.437,5.848
+wx_temperature_2m_mean_mean,100.0,11.066,6.333
+wx_temperature_2m_mean_std,100.0,1.999,0.953
+wx_precipitation_sum_sum,100.0,16.017,15.52
+wx_precipitation_sum_max,100.0,7.624,7.466
+wx_precipitation_hours_sum,100.0,34.664,25.358
+wx_sunshine_duration_sum,100.0,191543.362,92712.235
+wx_shortwave_radiation_sum_sum,100.0,76.841,48.35
+wx_wind_speed_10m_max_mean,100.0,17.73,4.634
+wx_wind_speed_10m_max_max,100.0,25.032,6.877
+wx_et0_fao_evapotranspiration_sum,100.0,14.068,9.634
+wx_growing_degree_days_10c_sum,100.0,22.935,26.946
+wx_is_foraging_day_sum,100.0,2.642,2.347

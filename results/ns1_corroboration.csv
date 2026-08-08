@@ -1,0 +1,9 @@
+tolerance_days,direction,n,matched,share,population
+1,logged honey event -> weight drop nearby,68,4,0.059,19 hives that keep a honey log
+1,weight drop -> logged honey event nearby,93,5,0.054,19 hives that keep a honey log
+3,logged honey event -> weight drop nearby,68,4,0.059,19 hives that keep a honey log
+3,weight drop -> logged honey event nearby,93,5,0.054,19 hives that keep a honey log
+7,logged honey event -> weight drop nearby,68,7,0.103,19 hives that keep a honey log
+7,weight drop -> logged honey event nearby,93,7,0.075,19 hives that keep a honey log
+14,logged honey event -> weight drop nearby,68,7,0.103,19 hives that keep a honey log
+14,weight drop -> logged honey event nearby,93,7,0.075,19 hives that keep a honey log

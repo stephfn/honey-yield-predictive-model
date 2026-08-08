@@ -1,0 +1,3 @@
+segment,n,n_with_removal,share_with_removal,net_mean_kg,gross_mean_kg,net_sd_kg,gross_sd_kg,mean_shift_on_touched_kg,correlation
+all periods,3012,130,0.0432,0.076,0.598,4.095,4.281,12.1,0.7329
+May-August,1024,83,0.0811,-0.034,1.075,5.964,6.113,13.68,0.7023
