@@ -1,12 +1,14 @@
 # Data provenance
 
-Two Parquet files, both derived from one published dataset. Nothing else in this project
-reads a database file, a network endpoint, or a local path outside this directory.
+Three Parquet files, two derived from one published dataset and one pulled from a public
+weather API. Nothing else in this project reads a database file, a network endpoint, or a
+local path outside this directory.
 
 | File | Rows | Grain | What it is |
 |---|---|---|---|
 | `honey_daily_source.parquet` | 41,710 | one row per hive per day | daily-grain slice of the published sensor archive |
 | `honey_model.parquet` | 26,215 | one row per hive-day with a valid neighbour on both sides | the modelling table |
+| `honey_weather.parquet` | 45,594 | one row per site per day | ERA5 reanalysis weather for each distinct hive site |
 
 ---
 
@@ -93,6 +95,16 @@ seconds-unit hives — which is part of why Milestone 3's extremes notebook repo
 honey harvest and 13.2% for feeding. See
 [`../results/event_distance_units.csv`](../results/event_distance_units.csv).
 
+**The per-hive correction is not sufficient — found in Milestone 5.** The unit switches
+*within* a single hive's record as well as between hives: hive 21's `honey_last_dif`
+advances by 1.0 per day through 2019 and by 86,400 per day through mid-2020.
+`normalise_event_distance_units` infers one unit per hive and therefore mis-converts part
+of those records. For anything event-related, prefer
+`honeymodel.harvest.detect_logged_events`, which reads the **reset** in the counter rather
+than its value and so needs no unit at all. It recovers 68 honey events across 19 hives
+whose month distribution reproduces the German beekeeping calendar without being told it —
+see `Milestone_5.ipynb` §2.1.
+
 ## Which daily files are in scope
 
 The publisher's daily files come in two arrangements:
@@ -112,6 +124,38 @@ This also settles an open risk from the Milestone 3 plan, which recorded that on
 rows ingested are 100% of the `years` daily grain, so the hive count, coverage and 1.7%
 extreme rate are full-archive figures, not estimates.
 
+## `honey_weather.parquet` — a second source, added in Milestone 5
+
+Ten daily variables from the **Open-Meteo Historical Weather API**, which serves ERA5 /
+ERA5-Land reanalysis on a ~9 km grid, pulled once per distinct hive site for
+2019-05-01 → 2022-12-31 and complete with no missing values.
+
+> Open-Meteo (2023). Historical Weather API. https://open-meteo.com/ — CC-BY-4.0.
+> Underlying data: ERA5 hourly, Hersbach et al. (2023), Copernicus Climate Change Service.
+
+The published hive coordinates are rounded to 0.1°, so 78 hives collapse to **34 distinct
+sites** — about 11 km of latitude, finer than the reanalysis grid — and the join to the
+modelling table is an equality join on rounded coordinates plus date, not a
+nearest-neighbour search.
+
+Three things to know before using it:
+
+1. **These are modelled values, not measurements.** Reanalysis is complete and internally
+   consistent, which is why it was chosen over GHCN-Daily station records: 34 sites across
+   six degrees of longitude would each have needed a nearest-station search, a distance
+   threshold and a gap-filling rule. Do not read much into a single site-day.
+2. **`is_foraging_day`, `growing_degree_days_10c` and `foraging_hours_proxy` are ours,**
+   derived at pull time so that the daily and period feature builders cannot define them
+   differently. The other ten columns are as served.
+3. **The `next_wx_*` period features are forbidden by default.** They carry the weather of
+   the period being forecast, are registered with `periods.assert_no_period_leakage` on
+   import of `honeymodel.weather`, and a feature matrix containing one raises
+   `PeriodLeakageError` unless the caller passes `allow=`. Any result computed with them is
+   an upper bound on what a perfect forecast would buy. See `Milestone_5.ipynb` §4.2.
+
+Licensing here is not the open question the Zenodo record is: CC-BY-4.0 permits
+redistribution with attribution, which the citation above provides.
+
 ## Regenerating these files
 
 ```bash
@@ -119,8 +163,12 @@ extreme rate are full-archive figures, not estimates.
 python scripts/build_honey_model.py
 
 # Refresh the source snapshot itself from the team's remote DuckDB.
-# The ONLY step that needs Tailscale and .env credentials.
+# Needs Tailscale and .env credentials.
 python scripts/pull_source_snapshot.py
+
+# Refresh the weather snapshot. Needs the open internet; caches per site under
+# data/_weather_cache/ so a rate-limited run resumes instead of restarting.
+python scripts/pull_weather_snapshot.py
 ```
 
 `build_honey_model.py` asserts that the result reproduces the published Milestone 3

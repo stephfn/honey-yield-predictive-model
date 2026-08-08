@@ -338,6 +338,22 @@ So the qualitative conclusion — logged events do not line up neatly with extre
 survives. The quantitative claim of "0%" does not, and the correct reading is that the
 logs are too sparse and too irregularly kept to explain much either way: only 15–61% of
 hive-days have any event of a given type logged at all.
+
+**Correction (Milestone 5): the per-hive fix above is not sufficient either.** The unit
+also switches *within* a single hive's record — hive 21's `honey_last_dif` advances by 1.0
+per day through 2019 and by 86,400 per day through mid-2020 — so
+`normalise_event_distance_units`, which infers one unit per hive, still mis-converts part
+of those records. The numbers in this section are therefore closer to right than
+Milestone 3's and are not exactly right, and the direction of the residual error is toward
+*under*-counting proximity, so the conclusion that events do not explain extremes is not at
+risk.
+
+The clean route is not to convert at all. `honeymodel.harvest.detect_logged_events` reads
+the **reset** in the counter rather than its value — a reset is a reset in either unit —
+and recovers 68 honey events across 19 hives whose month distribution reproduces the German
+beekeeping calendar without being told it: honey April–August, feeding July–September,
+queencell April–June, treatment August–November. Anything needing event *dates* should use
+that. `Milestone_5.ipynb` §2.1.
 """)
 
 md("### 3.4 When do extremes happen?")
@@ -636,6 +652,24 @@ md(r"""
 ## 6. Results and Interpretation
 
 ### 6.1 Where the model works, and where it fails
+
+**A skill score is a ratio, and the first version of this section used the wrong
+denominator.** Every segment was divided by *one* naive bar computed over the whole test
+fold. On a target whose variance is this seasonal that is not neutral: the annual bar
+carries summer's variance into the winter comparison and winter's into the summer one, so
+a winter prediction is scored against a bar summer made easy and a summer prediction
+against a bar winter made hard.
+
+Both columns are reported below. `skill_vs_naive` scores each segment against the best
+naive rule *within that segment*; `skill_vs_pooled_naive` is the single-bar convention this
+notebook originally published.
+
+**Which column to read depends on the segment**, and the rule is whether the segment is
+knowable before the forecast is made. Season and month are: it is January, and a beekeeper
+choosing between this model and a rule of thumb in January is choosing between them *in
+January*. A |change| decile is not — it is defined by the label, so its within-segment bar
+is a competitor that already knows the answer. The seasonal table below is read on the
+within-segment column and the decile chart on the pooled one, and each says which it uses.
 """)
 
 code(r"""
@@ -643,38 +677,78 @@ segmented = ev.segmented_report(
     y_test, predictions, matrix.meta.iloc[fold.test_index],
     by=("season", "month", "weight_change_decile"),
     baseline_mae=naive_mae,
+    baseline_predictions=ev.naive_baselines(model_df, fold),
 )
-display(segmented[segmented.segment == "season"].round(4))
+seasons = segmented[segmented.segment == "season"]
+display(seasons[["value", "n", "mae", "baseline_mae", "baseline_rule",
+                 "skill_vs_naive", "skill_vs_pooled_naive"]].round(4))
 
+fig, ax = plt.subplots(figsize=(9, 3.8))
+x = np.arange(len(seasons))
+ax.bar(x - 0.2, 100 * seasons.skill_vs_pooled_naive, 0.4,
+       color="#c44e52", label="one bar for the whole fold (as originally published)")
+ax.bar(x + 0.2, 100 * seasons.skill_vs_naive, 0.4,
+       color="#55a868", label="within-season bar (correct)")
+ax.axhline(0, color="black", linewidth=1)
+ax.set_xticks(x, seasons.value)
+ax.set(ylabel="skill vs. naive (%)",
+       title="Same model, same predictions — the denominator decides the seasonal story")
+ax.legend(fontsize=9)
+plt.tight_layout(); plt.show()
+""")
+
+code(r"""
 decile = segmented[segmented.segment == "weight_change_decile"].sort_values("value")
 fig, ax = plt.subplots(figsize=(10, 4))
-colors = ["#55a868" if s > 0 else "#c44e52" for s in decile.skill_vs_naive]
-ax.bar(decile.value, decile.skill_vs_naive, color=colors)
+colors = ["#55a868" if s > 0 else "#c44e52" for s in decile.skill_vs_pooled_naive]
+ax.bar(decile.value, decile.skill_vs_pooled_naive, color=colors)
 ax.axhline(0, color="black", linewidth=1)
-ax.set(title="Skill vs. naive by |weight change| decile", xlabel="decile of |actual change|",
-       ylabel="MAE reduction vs. best naive")
+ax.set(title="Skill vs. naive by |weight change| decile (pooled bar — see note)",
+       xlabel="decile of |actual change|", ylabel="MAE reduction vs. best naive")
 plt.tight_layout(); plt.show()
-display(decile[["value", "mae", "n", "skill_vs_naive"]].round(4))
+display(decile[["value", "mae", "n", "baseline_rule",
+                "skill_vs_pooled_naive", "skill_vs_naive"]].round(4))
 """)
 
 md(r"""
-The seasonal breakdown is the finding that matters most for anyone thinking of using this:
+**The seasonal claim does not survive the correction.** Same model, same predictions, same
+rows — only the denominator changes. Predicting zero is the best naive rule in all three
+seasons, so this is not an artifact of a rule swapping in:
 
-| Season | MAE | Skill vs. naive |
-|---|---|---|
-| Autumn | 0.222 | **+51%** |
-| Winter | 0.301 | **+34%** |
-| Summer | 0.885 | **−95%** |
+| Season | MAE | Within-season naive | One fold-wide bar (as published) | Within-season bar |
+|---|---|---|---|---|
+| Autumn | 0.2215 | 0.2173 | **+51.2%** | **−1.9%** |
+| Winter | 0.3008 | 0.2764 | **+33.7%** | **−8.8%** |
+| Summer | 0.8854 | 0.9097 | **−95.2%** | **+2.7%** |
 
-**The model is good exactly where the problem is easy and bad exactly where it is
-valuable.** Autumn and winter are low-variance dormancy, where a colony's weight barely
-moves and the model comfortably beats predicting zero. Summer is the nectar flow — the
-period a beekeeper actually needs a forecast for — and there the model is twice as bad as
-predicting no change at all. July alone carries MAE 1.099.
+(The final fold runs 2022-07-05 to 2022-12-24, so it has no spring rows. That has always
+been true of this section.)
 
-The decile view says the same thing in a different cut: the model beats naive on deciles
-1–8 of |change| and loses on the top two, catastrophically on the largest (skill −5.5).
-It is a good model of quiet days.
+The reason is arithmetic rather than subtle. The fold-wide bar is 0.4536 kg. Predicting
+zero costs only 0.2764 kg in winter dormancy, because a dormant colony's weight barely
+moves, and 0.9097 kg in the nectar flow. Dividing every season by the annual average of
+that competitor hands winter a bar 1.6× too easy and summer one 2× too hard.
+
+**The honest reading of the corrected column is that this model has essentially no seasonal
+skill in either direction** — −8.8% to +2.7%, with summer the only positive. That is a
+weaker claim than "+51% in autumn" and a much weaker one than "−95% in summer", and it is
+consistent with Section 5.1's finding that no single-stage model beats predicting zero
+overall. The seasons were never the story; the denominator was.
+
+`Milestone_4_alt.ipynb` §6.1 carries the same correction at weekly grain, where the model
+does have real seasonal structure once it is scored properly: +62% → −17.5% for winter and
+−24% → +16.4% for summer.
+
+**The decile view keeps the pooled bar, and it does not reverse.** The model beats naive on
+deciles 1–8 of |change| and loses on the top two, catastrophically on the largest
+(−546%). It is a good model of quiet days. The `skill_vs_naive` column is printed alongside
+only to show why it cannot be read: predicting zero inside D1 costs 0.008 kg *by
+construction*, because D1 is the set of days on which almost nothing happened, so every
+model on earth scores −939% against it.
+
+So the seasonal finding and the decile finding were never the same finding, and the first
+version of this section ran them together. "Good where it is easy, bad where it is
+valuable" was always true of the deciles. It was an artifact in the seasons.
 
 (R² within a decile is not interpretable — conditioning on |y| collapses the variance that
 R² normalises by, which is why those values are large and negative. MAE and skill are the
@@ -732,8 +806,10 @@ md(r"""
   configuration that beats predicting zero.
 - **Extreme weight events are detectable in advance**: PR-AUC 0.17–0.31 against a no-skill
   rate of 0.010–0.018 (10–17× lift), consistently across folds.
-- Performance is **season-dependent by a wide margin**: +51% skill in autumn, +34% in
-  winter, −95% in summer.
+- Performance is **not** meaningfully season-dependent. Scored against a within-season
+  naive competitor the range is −8.8% (winter) to +2.7% (summer). The "+51% autumn / +34%
+  winter / −95% summer" figures this notebook first reported were a property of the
+  denominator, not of the model — Section 6.1.
 - The model **generalises to unseen hives** — leave-hives-out performance matches temporal
   performance, so it is not memorising hive identity.
 - **Yesterday's weight *change* is the dominant predictor**, not absolute weight level.
@@ -742,17 +818,30 @@ md(r"""
 
 The project's point is whether a next-day forecast changes a decision.
 
-- **Harvest timing: not yet.** The forecast is at its weakest during the nectar flow, when
-  harvest decisions are made. A beekeeper is better served by the naive assumption that
-  tomorrow resembles today.
-- **Overwintering checks: usable.** Autumn and winter forecasts beat naive by 34–51%, and
-  a colony consuming stores faster than its own recent trend is exactly the low-variance
-  signal the model handles well.
-- **Event alerting: the most promising track, with a caveat.** The classifier fires 10–17×
-  better than chance. But because most of what it detects is beekeeper handling, its
-  practical use is closer to *verifying that a logged intervention had the expected weight
-  effect* than to warning of an unattended swarm. An operating point favouring recall is
-  the right default for early warning, at the cost of precision.
+**These recommendations were rewritten after the Section 6.1 correction.** The first
+version told beekeepers to use the forecast for overwintering and not for harvest, on the
+strength of +34–51% autumn/winter skill against −95% in summer. Those numbers were the
+same predictions divided by an annual bar. Against within-season competitors the model is
+close to parity everywhere, and the advice changes accordingly.
+
+- **Harvest timing: not from this model, but not for the reason first given.** Summer is
+  the model's *best* season on the corrected column (+2.7%), and +2.7% is not a decision
+  aid. The forecast is not weakest during the nectar flow; it is roughly as good as
+  predicting no change, everywhere.
+- **Overwintering checks: no.** This is a straight reversal. Autumn and winter are the
+  seasons where the model *loses* to predicting zero (−1.9% and −8.8%). A dormant colony's
+  weight barely moves, which makes "assume no change" an excellent rule and a hard one to
+  improve on. The earlier +34–51% was that easy bar being scored on the annual scale.
+- **Event alerting: still the most promising track, with a caveat, and now the only one.**
+  The classifier fires 10–17× better than chance, and nothing in the correction touches it
+  — PR-AUC is not a skill score and has no naive-bar denominator to get wrong. But because
+  most of what it detects is beekeeper handling, its practical use is closer to *verifying
+  that a logged intervention had the expected weight effect* than to warning of an
+  unattended swarm. An operating point favouring recall is the right default for early
+  warning, at the cost of precision.
+- **If a beekeeper wants a usable forecast, it is not at this grain.**
+  `Milestone_4_alt.ipynb` reaches +16.4% in summer and +20.7% in spring at weekly grain on
+  the same corrected scoring. A week is the horizon this dataset supports.
 
 ### 7.3 What the data cannot support
 
@@ -765,18 +854,38 @@ The project's point is whether a next-day forecast changes a decision.
 - **Sub-daily inference.** The daily value is a *mean* of the day's minute readings, so
   intra-day dynamics — the actual foraging signal — are averaged away before we see them.
 
-### 7.4 Open questions for Milestone 5
+### 7.4 Open questions for Milestone 5 — with what came of them
+
+Items 2 and 3 have since been carried out in `Milestone_5.ipynb`, and neither held up.
+The outcomes are recorded here rather than left as open suggestions.
 
 1. **Model the minute or hourly grain.** The 52M-row minute archive is available and
-   contains the foraging signal that daily averaging destroys. This is the single largest
-   opportunity, and it directly addresses why the daily target looks noise-dominated.
-2. **Weather integration** (Part F of the plan): GHCN-Daily over the German bounding box,
-   joined on the 34 distinct hive sites now carried in the table. Nectar flow is
-   weather-driven; the current feature set has no weather at all.
-3. **Hive-relative extreme definition.** The 5-MAD variant reaches PR-AUC 0.52 against
-   0.23 for the absolute ±5 kg rule and should probably replace it.
+   contains the foraging signal that daily averaging destroys. Still open, and still the
+   single largest untried opportunity. Note that `Milestone_4_alt.ipynb` moved in the
+   *other* direction — to weekly and monthly — and found that longer periods help, which
+   makes the sub-daily case less obvious than it looked from here.
+2. ~~**Weather integration** (Part F of the plan)~~ — **done, and it is not worth
+   building.** `data/honey_weather.parquet` now holds 45,594 site-days of ERA5 reanalysis
+   for the 34 sites (reanalysis rather than GHCN-Daily: gridded, complete, no
+   nearest-station or gap-filling rules). At weekly grain the weather already in hand is
+   worth nothing, and giving the model the *actual* weather of the week being forecast — a
+   perfect seven-day forecast — raises skill from +8.7% to +9.1%. Half a point is the
+   ceiling. `Milestone_4_alt.ipynb` §5.6.
+3. ~~**Hive-relative extreme definition.**~~ **The comparison behind this was not a
+   comparison.** PR-AUC is bounded below by the positive rate, and the 5-MAD rule fires far
+   more often than the absolute ±5 kg rule — so "0.52 against 0.23" was mostly the rate
+   difference. Matched to the same positive rate at weekly grain, the absolute label
+   reaches PR-AUC **0.32** and the relative label **0.20**, and the end-to-end two-stage
+   regression scores +5.9% against −1.9%. Removing the hive-size shortcut makes the label
+   more meaningful and the task less learnable. `Milestone_5.ipynb` §5.
 4. Hyperparameter tuning, multi-day horizons, and per-hive personalisation — all untouched
-   so far, and all secondary to items 1 and 2.
+   so far. Multi-day horizons turned out to be the productive one and became
+   `Milestone_4_alt.ipynb`; tuning is not worth doing on a result whose fold-to-fold sd is
+   wider than every effect it would chase.
+5. **New, and now the highest-priority item:** re-score every segmented table in this
+   notebook and in `Milestone_4_alt.ipynb` against within-segment baselines. Sections 6.1
+   and 7.2 above are done; the per-hive and per-month tables in `results/segmented.csv`
+   carry both columns but the prose around them has not been revisited.
 
 ### 7.5 Limitations
 

@@ -307,6 +307,7 @@ def segmented_report(
     meta: pd.DataFrame,
     by: Sequence[str] = ("season", "month", GROUP),
     baseline_mae: float | None = None,
+    baseline_predictions: dict[str, np.ndarray] | None = None,
 ) -> pd.DataFrame:
     """Metrics broken out by one or more segments, in a tidy frame ready to plot.
 
@@ -316,6 +317,25 @@ def segmented_report(
 
     `by` accepts column names present in `meta`, plus the derived segment
     "weight_change_decile" (decile of |actual change|).
+
+    **Two skill columns, and they are not interchangeable.**
+
+    `baseline_mae` is one number for the whole window, and dividing every segment by it is
+    what the first pass of this project did. On a target whose variance is strongly
+    seasonal that denominator is not neutral: it carries summer's variance into the winter
+    comparison and winter's into the summer one, so a winter prediction is scored against
+    a bar that summer made hard and a summer prediction against a bar winter made easy.
+    At weekly grain that single choice was worth roughly 90 percentage points of apparent
+    seasonal skill, and it reversed which season the model was best at.
+
+    `baseline_predictions` is the fix: pass the naive rules' predictions for the same rows
+    (from `naive_baselines` or `periods.period_baselines`) and each segment is scored
+    against the best naive rule *within that segment*. The winning rule is allowed to
+    differ by segment, and usually does.
+
+    Both are reported when both are available -- `skill_vs_naive` from the within-segment
+    bar, `skill_vs_pooled_naive` from the single one -- so the size of the difference is
+    visible in the table rather than asserted in prose.
     """
     frame = meta.reset_index(drop=True).copy()
     frame["y_true"] = np.asarray(y_true, dtype=float)
@@ -328,6 +348,16 @@ def segmented_report(
 
         frame["weight_change_decile"] = weight_change_decile(frame["y_true"])
 
+    predictions = {
+        name: np.asarray(values, dtype=float)
+        for name, values in (baseline_predictions or {}).items()
+    }
+    for name, values in predictions.items():
+        if len(values) != len(frame):
+            raise ValueError(
+                f"baseline {name!r} has {len(values)} predictions for {len(frame)} rows"
+            )
+
     rows = []
     for segment in by:
         if segment not in frame.columns:
@@ -335,8 +365,19 @@ def segmented_report(
         for value, group in frame.groupby(segment, observed=True):
             metrics = regression_metrics(group["y_true"], group["y_pred"])
             row = {"segment": segment, "value": value, **metrics}
+            if predictions:
+                index = group.index.to_numpy()
+                bars = {
+                    name: regression_metrics(group["y_true"], values[index])["mae"]
+                    for name, values in predictions.items()
+                }
+                best = min(bars, key=bars.get)
+                row["baseline_mae"] = bars[best]
+                row["baseline_rule"] = best
+                row["skill_vs_naive"] = skill_score(metrics["mae"], bars[best])
             if baseline_mae is not None:
-                row["skill_vs_naive"] = skill_score(metrics["mae"], baseline_mae)
+                key = "skill_vs_pooled_naive" if predictions else "skill_vs_naive"
+                row[key] = skill_score(metrics["mae"], baseline_mae)
             rows.append(row)
     return pd.DataFrame(rows).sort_values(["segment", "value"]).reset_index(drop=True)
 

@@ -1,10 +1,12 @@
-# Milestone 4 environment. Developed and verified on Python 3.13.5.
+# Milestone 4 / 5 environment. Developed and verified on Python 3.13.5.
 #
 #   pip install -r requirements.txt
 #
 # Versions are pinned to what the committed results were produced with. Only
 # python-dotenv and the `quack` DuckDB extension are needed for the optional remote
-# path (scripts/pull_source_snapshot.py); nothing else in the project touches a network.
+# path (scripts/pull_source_snapshot.py); the only other network step,
+# scripts/pull_weather_snapshot.py, uses the standard library. Nothing needed to
+# reproduce a notebook touches a network.
 
 duckdb==1.5.3
 pandas==2.2.3

@@ -238,6 +238,9 @@ data/
 !data/README.md
 data/*.duckdb
 data/duckdb_temp/
+# Per-site resume cache for scripts/pull_weather_snapshot.py. Intermediate; the merged
+# honey_weather.parquet above is the artifact.
+data/_weather_cache/
 
 # Result tables written by scripts/run_*.py and rendered by the notebook. Committed so a
 # reader can check a number in the write-up against the run that produced it.

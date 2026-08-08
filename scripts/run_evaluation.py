@@ -159,6 +159,18 @@ def main() -> int:
     print("\nclassifier\n", pd.DataFrame(classifier_rows).round(4).to_string(index=False))
 
     # ---- segmented report on the last fold --------------------------------
+    #
+    # Two skill columns, and the difference between them is a correction rather than a
+    # refinement. `skill_vs_pooled_naive` divides every segment by one bar computed over
+    # the whole fold, which is what this project reported first. On a target this
+    # seasonal that denominator carries summer's variance into the winter comparison and
+    # winter's into the summer one. `skill_vs_naive` scores each segment against the best
+    # naive rule inside it.
+    #
+    # Which to read depends on the segment. Season, month and hive are knowable before
+    # the forecast is made, so the within-segment bar is the honest competitor. A
+    # |change| decile is defined by the label, so its within-segment bar is a rule that
+    # already knows the answer -- for that one row group the pooled column is correct.
     last = folds[-1]
     X_train, y_train = matrix.X.iloc[last.train_index], matrix.y.iloc[last.train_index]
     X_test, y_test = matrix.X.iloc[last.test_index], matrix.y.iloc[last.test_index]
@@ -168,6 +180,7 @@ def main() -> int:
         y_test, predictions, matrix.meta.iloc[last.test_index],
         by=("season", "month", "hive_id", "weight_change_decile"),
         baseline_mae=ev.best_baseline_mae(board, last.name),
+        baseline_predictions=ev.naive_baselines(frame, last),
     )
     segmented.to_csv(RESULTS_DIR / "segmented.csv", index=False)
     print("\nsegmented (season)\n",

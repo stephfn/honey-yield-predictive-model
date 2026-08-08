@@ -1,0 +1,3 @@
+rule,definition,n_positive,positive_rate_pct,hives_with_a_positive,hives_with_no_positive,max_positives_on_one_hive,share_on_top_5_hives,median_hive_weight_of_positives_kg
+absolute,|change| > 11.06 kg,92,3.05,33,40,9,0.359,34.8
+relative,|change| > 13.47 x hive change MAD,92,3.05,38,35,9,0.326,34.3

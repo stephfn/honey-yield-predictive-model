@@ -77,17 +77,49 @@ PERIOD_FORBIDDEN = frozenset(
         "next_period_days_observed",
         "period_extreme_flag",
         "period_extreme_relative_flag",
+        # Milestone 5 additions. The gross-gain target and the removal that produced it
+        # are both measured inside the period being forecast; `period_removed_kg` (the
+        # current period's removal) is deliberately *not* here, because it is knowable.
+        "target_next_period_gross_gain_kg",
+        "next_period_removed_kg",
     }
     | {f"{event}_next_dif_days" for event in EVENT_TYPES}
 )
+
+
+#: Weather measured over the period being forecast. Forbidden by default and whitelisted
+#: only for the explicitly-labelled upper-bound rung in `weather.weather_feature_sets`:
+#: next week's actual rainfall is not available on Sunday evening, and a model given it is
+#: answering "what could a perfect forecast buy?" rather than "what can we ship?".
+#:
+#: Populated by `honeymodel.weather` on import rather than declared here, so that this
+#: module keeps working with no weather snapshot present. That is not a hole: the only way
+#: a `next_wx_*` column can exist on a frame is `weather.add_period_weather`, so the guard
+#: is armed whenever there is anything for it to catch.
+PERIOD_LOOKAHEAD_WEATHER = frozenset()
 
 
 class PeriodLeakageError(AssertionError):
     """Raised when a forbidden period column reaches a feature matrix."""
 
 
-def assert_no_period_leakage(columns: object) -> None:
-    offenders = sorted(PERIOD_FORBIDDEN.intersection(set(columns)))
+def _forbidden(allow: frozenset[str] | set[str] | None = None) -> frozenset[str]:
+    blocked = PERIOD_FORBIDDEN | PERIOD_LOOKAHEAD_WEATHER
+    return blocked - frozenset(allow or ())
+
+
+def assert_no_period_leakage(
+    columns: object, allow: frozenset[str] | set[str] | None = None
+) -> None:
+    """Fail if any forbidden column reached a feature matrix.
+
+    `allow` exists for exactly one caller -- the upper-bound weather rung -- and every
+    result computed with it set is labelled as an upper bound where it is reported. It is
+    a deliberate, named exception rather than a hole: without it the honest comparison
+    "what does a perfect weather forecast buy?" could not be measured at all, and with it
+    unlabelled the number would be indistinguishable from a deployable one.
+    """
+    offenders = sorted(_forbidden(allow).intersection(set(columns)))
     if offenders:
         raise PeriodLeakageError(
             "these columns are only knowable after the period ends, or are derived from "
@@ -400,6 +432,7 @@ def build_period_matrix(
     frame: pd.DataFrame,
     feature_set: str | list[str] = "history+sensors",
     target: str = PERIOD_TARGET,
+    allow: frozenset[str] | set[str] | None = None,
 ) -> PeriodMatrix:
     """X, y, and the metadata the segmented report needs, at period grain.
 
@@ -414,11 +447,11 @@ def build_period_matrix(
     missing = [column for column in names if column not in frame.columns]
     if missing:
         raise KeyError(f"period feature set is missing columns: {missing}")
-    assert_no_period_leakage(names)
+    assert_no_period_leakage(names, allow=allow)
 
     usable = frame.dropna(subset=[target]).reset_index(drop=True)
     X = usable[names].astype(float)
-    assert_no_period_leakage(X.columns)
+    assert_no_period_leakage(X.columns, allow=allow)
 
     meta_columns = [
         GROUP,
@@ -647,6 +680,154 @@ def period_threshold_sweep(
                 "n_extreme": int(positive),
                 "positive_rate_pct": round(100 * positive / len(y), 2),
                 "threshold_in_sd": round(threshold / y.std(), 2),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+# ---------------------------------------------------------------------------
+# Per-hive relative extremes -- Milestone 4 alt, Section 7.3 item 4
+# ---------------------------------------------------------------------------
+
+#: The hive's own period-to-period change MAD, computed in `add_period_features`. The
+#: daily table's analogue is `hive_target_mad_kg`, which item 4 named; at period grain the
+#: daily column measures the wrong quantity, so the period version is used instead.
+HIVE_SCALE_COLUMN = "period_hive_change_mad_kg"
+
+
+def hive_relative_threshold_kg(
+    frame: pd.DataFrame, multiplier: float = 5.0, scale_column: str = HIVE_SCALE_COLUMN
+) -> pd.Series:
+    """Per-row extreme threshold in kg: `multiplier` x the hive's own change MAD.
+
+    Section 7.3 item 4: 11.1 kg on a 10 kg nucleus and on a 100 kg production hive are not
+    the same event. The absolute rule does not define "extreme", it defines "large", and
+    large is a property of the hive as much as of the week.
+    """
+    return multiplier * frame[scale_column].astype(float)
+
+
+def relative_extreme_flag(
+    frame: pd.DataFrame,
+    multiplier: float = 5.0,
+    target: str = PERIOD_TARGET,
+    scale_column: str = HIVE_SCALE_COLUMN,
+) -> pd.Series:
+    """Boolean label under the per-hive rule. NaN scale yields False, not NaN.
+
+    A hive with no estimable change MAD -- too few contiguous periods -- cannot have a
+    relative extreme defined for it, and treating that as "not extreme" is the
+    conservative reading: it keeps the row in the denominator and out of the positives,
+    so nothing is scored on a label that was never computed.
+    """
+    threshold = hive_relative_threshold_kg(frame, multiplier, scale_column)
+    return (frame[target].abs() > threshold).fillna(False)
+
+
+def calibrate_relative_multiplier(
+    frame: pd.DataFrame,
+    target_rate: float,
+    target: str = PERIOD_TARGET,
+    scale_column: str = HIVE_SCALE_COLUMN,
+    bounds: tuple[float, float] = (0.5, 60.0),
+    tolerance: float = 1e-4,
+) -> float:
+    """The multiplier whose positive rate matches `target_rate`.
+
+    Without this the comparison in Section 5 is not a comparison. PR-AUC is bounded below
+    by the positive rate, so a relative rule that fires on 13% of weeks will post a much
+    higher PR-AUC than an absolute rule firing on 3% while being a *worse* detector. Fixing
+    the positive rate makes the two labels differ only in *which* weeks they select, which
+    is the question. Bisection, because the positive rate is a monotone step function of
+    the multiplier and anything cleverer would be pretending it is smooth.
+    """
+    low, high = bounds
+    for _ in range(80):
+        middle = 0.5 * (low + high)
+        rate = float(relative_extreme_flag(frame, middle, target, scale_column).mean())
+        if abs(rate - target_rate) < tolerance:
+            return middle
+        if rate > target_rate:
+            low = middle
+        else:
+            high = middle
+    return 0.5 * (low + high)
+
+
+def extreme_label_comparison(
+    frame: pd.DataFrame,
+    absolute_kg: float,
+    multiplier: float,
+    target: str = PERIOD_TARGET,
+    scale_column: str = HIVE_SCALE_COLUMN,
+) -> pd.DataFrame:
+    """How the absolute and relative labels differ, at whatever rates they are set to.
+
+    `hives_with_no_positive` is the column that carries the argument. An absolute rule
+    concentrates its positives on the heaviest, most productive hives and never fires at
+    all on the small ones, so a classifier trained on it learns "which hive is this"
+    rather than "is something unusual happening". The relative rule spreads the same
+    number of positives across the fleet.
+    """
+    usable = frame.dropna(subset=[target])
+    absolute = usable[target].abs() > absolute_kg
+    relative = relative_extreme_flag(usable, multiplier, target, scale_column)
+    n_hives = usable[GROUP].nunique()
+
+    rows = []
+    for name, label in (("absolute", absolute), ("relative", relative)):
+        by_hive = label.groupby(usable[GROUP]).sum()
+        rows.append(
+            {
+                "rule": name,
+                "definition": (
+                    f"|change| > {absolute_kg:.2f} kg"
+                    if name == "absolute"
+                    else f"|change| > {multiplier:.2f} x hive change MAD"
+                ),
+                "n_positive": int(label.sum()),
+                "positive_rate_pct": round(100 * float(label.mean()), 2),
+                "hives_with_a_positive": int((by_hive > 0).sum()),
+                "hives_with_no_positive": int(n_hives - (by_hive > 0).sum()),
+                "max_positives_on_one_hive": int(by_hive.max()),
+                "share_on_top_5_hives": round(
+                    float(by_hive.sort_values(ascending=False).head(5).sum() / max(label.sum(), 1)), 3
+                ),
+                "median_hive_weight_of_positives_kg": round(
+                    float(usable.loc[label.to_numpy(), "hive_median_weight_kg"].median()), 1
+                )
+                if label.any()
+                else np.nan,
+            }
+        )
+    table = pd.DataFrame(rows)
+    table.attrs["agreement"] = float((absolute & relative).sum())
+    return table
+
+
+def relative_threshold_sweep(
+    frame: pd.DataFrame,
+    multipliers: tuple[float, ...] = (2, 3, 4, 5, 6, 8),
+    target: str = PERIOD_TARGET,
+    scale_column: str = HIVE_SCALE_COLUMN,
+) -> pd.DataFrame:
+    """Positive rate and fleet coverage across candidate multipliers."""
+    usable = frame.dropna(subset=[target])
+    n_hives = usable[GROUP].nunique()
+    rows = []
+    for multiplier in multipliers:
+        label = relative_extreme_flag(usable, float(multiplier), target, scale_column)
+        by_hive = label.groupby(usable[GROUP]).sum()
+        rows.append(
+            {
+                "multiplier": float(multiplier),
+                "n_extreme": int(label.sum()),
+                "positive_rate_pct": round(100 * float(label.mean()), 2),
+                "hives_covered": int((by_hive > 0).sum()),
+                "hives_total": int(n_hives),
+                "median_threshold_kg": round(
+                    float(hive_relative_threshold_kg(usable, float(multiplier), scale_column).median()), 2
+                ),
             }
         )
     return pd.DataFrame(rows)

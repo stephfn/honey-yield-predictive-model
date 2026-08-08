@@ -1,0 +1,17 @@
+feature,rho_current_period,rho_next_period,n_next
+wx_shortwave_radiation_sum_sum,0.1428,0.1065,3012
+wx_et0_fao_evapotranspiration_sum,0.1176,0.0942,3012
+wx_is_foraging_day_sum,0.1469,0.0846,3012
+wx_sunshine_duration_sum,0.1366,0.0742,3012
+wx_temperature_2m_max_max,0.0782,0.0612,3012
+wx_temperature_2m_max_mean,0.0698,0.053,3012
+wx_temperature_2m_mean_mean,0.048,0.0442,3012
+wx_growing_degree_days_10c_sum,0.0324,0.0409,3012
+wx_wind_speed_10m_max_max,-0.1011,-0.0339,3012
+wx_wind_speed_10m_max_mean,-0.0949,-0.033,3012
+wx_precipitation_sum_max,-0.0963,0.03,3012
+wx_temperature_2m_min_min,0.0179,0.0297,3012
+wx_precipitation_sum_sum,-0.1094,0.0293,3012
+wx_temperature_2m_min_mean,0.0135,0.0254,3012
+wx_temperature_2m_mean_std,-0.0314,-0.0116,3012
+wx_precipitation_hours_sum,-0.1311,-0.0012,3012
