@@ -383,7 +383,19 @@ def segmented_report(
 
 
 def fold_summary(results: pd.DataFrame, by: str = "model") -> pd.DataFrame:
-    """Mean +/- sd across folds. A single fold's number is never the headline."""
+    """Mean +/- sd across folds. A single fold's number is never the headline.
+
+    Every `*_mean` column is an **unweighted** mean over folds, not a pooled figure over
+    rows. `skill_mean` in particular is the mean of the per-fold skill scores, which is
+    not the same as a skill score recomputed from `mae_mean` -- a mean of ratios is not
+    the ratio of the means, and the two differ by a few tenths of a percentage point here.
+
+    The `n` column is the **sum** of test rows across folds, reported so the size of the
+    evaluation is visible. It is not the denominator of the means beside it. Fold test
+    sizes on this dataset range from 3,867 to 4,525, so unweighted and row-weighted means
+    are close, but they are not identical and the distinction should be stated wherever
+    this table is published.
+    """
     grouped = results.groupby(by)
     summary = grouped.agg(
         folds=("fold", "nunique"),
