@@ -94,8 +94,7 @@ def normalise_event_distance_units(
 
     The published `*_last_dif` / `*_next_dif` columns are not in a consistent unit. For
     some hives they advance by exactly 1.0 per calendar day; for others by exactly
-    86400.0. The unit is a property of the hive's source file, not of the event type:
-    33 hives are in days and 24 are in seconds.
+    86400.0. The unit is a property of the hive's source file, not of the event type.
 
     That inconsistency silently breaks any threshold comparison. Milestone 3's extremes
     notebook asked what fraction of events fall "within 1 day" by comparing the raw
@@ -103,7 +102,14 @@ def normalise_event_distance_units(
     never register as near an event and pushed the reported figure toward 0%.
 
     The unit is inferred per (hive, column) from the median increment between
-    consecutive-day observations, which is 1 or 86400 and nothing in between.
+    consecutive-day observations, which is 1 or 86400 and nothing in between. A hive
+    whose median increment cannot be computed -- because it never contributes two
+    consecutive days with the column populated -- is reported as undetermined and left
+    unconverted, so it is *not* evidence that the hive is day-scaled. The three report
+    columns partition the hives, and for most columns the undetermined group is the
+    largest of the three: the conversion resolves far less of this defect than it
+    appears to, and downstream proximity figures remain understated by an unknown
+    amount.
     """
     frame = frame.copy()
     columns = [f"{event}_{side}_dif" for event in EVENT_TYPES for side in ("last", "next")]
@@ -123,7 +129,10 @@ def normalise_event_distance_units(
             frame.loc[mask, column] = frame.loc[mask, column] / SECONDS_PER_DAY
         report_rows.append({
             "column": column,
-            "hives_in_days": int((~in_seconds.fillna(True)).sum()),
+            # `median_increment > 1_000` is already False for NaN, so the complement of
+            # `in_seconds` would silently count every undetermined hive as day-scaled.
+            # Test for days positively instead, so the three columns partition the hives.
+            "hives_in_days": int((median_increment <= 1_000).sum()),
             "hives_in_seconds": int(in_seconds.fillna(False).sum()),
             "hives_undetermined": int(median_increment.isna().sum()),
         })
